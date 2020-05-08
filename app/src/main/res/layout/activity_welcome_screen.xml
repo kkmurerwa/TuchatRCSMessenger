@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/colorPrimary"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".WelcomeScreen">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="App Logo"
+        app:srcCompat="@drawable/ic_launcher_foreground"
+        tools:layout_editor_absoluteX="142dp"
+        tools:layout_editor_absoluteY="148dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-condensed"
+        android:padding="5dp"
+        android:text="Tuchat"
+        android:textColor="@color/colorAccent"
+        android:textSize="38sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_description"
+        android:textSize="16sp"
+        android:textColor="@color/colorText"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginVertical="40dp"
+        android:text="Start using Tuchat"
+        android:textAllCaps="false"
+        android:id="@+id/get_started"
+        android:padding="12dp"
+        android:textSize="24sp"
+        android:background="@drawable/rounded_sign_in_button"
+        android:textColor="@color/colorAccent"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/disclaimer_line"
+        android:textColor="@color/colorText"
+        android:text="@string/disclaimer"
+        android:layout_height="wrap_content"
+        android:lineSpacingExtra="5sp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginVertical="20dp"
+        android:layout_marginHorizontal="30dp"/>
+
+</LinearLayout>

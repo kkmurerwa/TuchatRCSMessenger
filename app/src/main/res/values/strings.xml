@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Tuchat</string>
+    <string name="app_description">Kenya\'s First RCS Messenger</string>
+    <string name="phone_number_auth_warning">Tuchat will send you an SMS message to verify your phone number. Carrier charges may apply.</string>
+    <string name="disclaimer">By clicking the "Start using Tuchat" button, you agree to our <a href="http://www.google.com">Privacy policy</a>
+    and <a href="http://www.google.com">Terms of Service</a></string>
+</resources>

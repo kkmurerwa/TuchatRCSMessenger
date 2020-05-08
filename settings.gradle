@@ -1,0 +1,2 @@
+rootProject.name='Tuchat RCS Messenger'
+include ':app'
