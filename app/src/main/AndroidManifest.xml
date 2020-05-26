@@ -9,17 +9,33 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SignInActivity"
-            android:parentActivityName=".WelcomeScreen">
+        <activity android:name=".NewConversationActivity"
+            android:parentActivityName=".MainActivity">
+            <!--Stuff here-->
         </activity>
-        <activity android:name=".WelcomeScreen">
+        <activity
+            android:name=".ChatsActivity"
+            android:parentActivityName=".MainActivity">
+            <!--Stuff here-->
+        </activity>
+        <activity
+            android:name=".ScreenNameSelection"
+            android:parentActivityName=".SignInActivity">
+            <!--Stuff here-->
+        </activity>
+        <activity android:name=".SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"></activity>
+        <activity
+            android:name=".SignInActivity"
+            android:parentActivityName=".WelcomeScreen"></activity>
+        <activity android:name=".WelcomeScreen"></activity>
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleTop"></activity>
     </application>
 
 </manifest>

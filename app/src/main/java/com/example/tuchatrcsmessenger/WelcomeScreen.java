@@ -39,7 +39,7 @@ public class WelcomeScreen extends AppCompatActivity {
             }
         });
 
-
+        //The code below makes the links on the Privacy policy and TOS sections of the disclaimer clickable links
         disclaimerTextview = findViewById(R.id.disclaimer_line);
         disclaimerTextview.setMovementMethod(LinkMovementMethod.getInstance());
     }

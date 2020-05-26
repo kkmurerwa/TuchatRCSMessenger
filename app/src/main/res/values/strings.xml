@@ -1,7 +1,20 @@
 <resources>
     <string name="app_name">Tuchat</string>
-    <string name="app_description">Kenya\'s First RCS Messenger</string>
-    <string name="phone_number_auth_warning">Tuchat will send you an SMS message to verify your phone number. Carrier charges may apply.</string>
-    <string name="disclaimer">By clicking the "Start using Tuchat" button, you agree to our <a href="http://www.google.com">Privacy policy</a>
-    and <a href="http://www.google.com">Terms of Service</a></string>
+    <string name="app_description">Ken\'s First RCS Messenger</string>
+    <string name="please_wait_string">Please wait...</string>
+
+    <string name="phone_number_auth_warning">Tuchat will send you an SMS message to verify your phone number.
+        Carrier charges may apply.</string>
+    <string name="disclaimer">By clicking the "Start using Tuchat" button, you agree to our
+        <a href="https://github.com/xwaxes01/TuchatUnofficial/wiki/Privacy-Policy">Privacy policy</a> and
+        <a href="https://github.com/xwaxes01/TuchatUnofficial/wiki/Terms-of-Service">Terms of Service</a></string>
+
+    <string name="sign_in_string">Sign in</string>
+    <string name="phone_number_prompt">Enter your phone number</string>
+
+    <string name="messenger_logo">This is the messenger logo</string>
+
+    <string name="display_name_prompt">Enter your display name</string>
+    <string name="display_name_warning">This name will be displayed to other users</string>
+    <string name="continue_button">Continue</string>
 </resources>

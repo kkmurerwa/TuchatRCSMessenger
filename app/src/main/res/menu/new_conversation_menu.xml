@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        app:showAsAction="always"
+        android:id="@+id/three_dot_menu"
+        android:icon="@drawable/three_dot_button"
+        android:title="">
+        <menu>
+            <item
+                android:id="@+id/refresh_contacts"
+                android:enabled="true"
+                android:icon="@drawable/refresh_contacts_icon"
+                android:title="Refresh contacts"
+                app:showAsAction="never" />
+        </menu>
+    </item>
+</menu>

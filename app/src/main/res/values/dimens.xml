@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_entry_padding">20dp</dimen>
+    <dimen name="message_padding">30dp</dimen>
+    <dimen name="notification_border_radius">6dp</dimen>
+    <dimen name="individual_message_padding">12dp</dimen>
+    <dimen name="type_message_text_entry_dimension">15dp</dimen>
+</resources>
