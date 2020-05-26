@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "432841621688",
+    "firebase_url": "https://tuchat-rcs-messenger.firebaseio.com",
+    "project_id": "tuchat-rcs-messenger",
+    "storage_bucket": "tuchat-rcs-messenger.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:432841621688:android:324ff27264bd5a2e40744d",
+        "android_client_info": {
+          "package_name": "com.example.tuchatrcsmessenger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "432841621688-fg12832a16lv83aclm8bqj1nh8poqa15.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tuchatrcsmessenger",
+            "certificate_hash": "323a984dff3748104645483bf41631cd330925bd"
+          }
+        },
+        {
+          "client_id": "432841621688-7fhk62dt54c328iq6bd59j8kcrd7kiq6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGJFg_JybBvx8nkuOwlU5cTjJXiKBOWdw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "432841621688-7fhk62dt54c328iq6bd59j8kcrd7kiq6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
