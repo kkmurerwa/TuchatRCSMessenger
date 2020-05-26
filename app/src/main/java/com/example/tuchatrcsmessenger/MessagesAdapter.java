@@ -6,6 +6,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,17 +23,15 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
     private List<MessagesClass> listItems;
     private Context context;
     private String myName;
-    private Date currentDate;
-    private String messageSenderName;
-    private String serverTimestamp;
     private SimpleDateFormat formatterMessageTime = new SimpleDateFormat("HH:mm");
-    private SimpleDateFormat formatterDate = new SimpleDateFormat("dd-MM-yyyy");
+    private SimpleDateFormat formatterDate = new SimpleDateFormat("dd MMM yyyy");
+    private SimpleDateFormat formatterHalfDate = new SimpleDateFormat("MMM yyyy");
+    private SimpleDateFormat formatterDay = new SimpleDateFormat("dd");
+    Date today;
 
-    public MessagesAdapter(List<MessagesClass> listItems, Context context) {
+    MessagesAdapter(List<MessagesClass> listItems, Context context) {
         this.listItems = listItems;
         this.context = context;
-        this.currentDate = new Date();
-        this.currentDate.getTime();
     }
 
 
@@ -47,10 +46,58 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         MessagesClass listItem = listItems.get(position);
+        MessagesClass previousListItem;
+        today = new Date();
+        today.getTime();
+
+        String currentMessageDate = formatterDate.format(listItem.sentTime);
+        String currentMessageHalfDate = formatterHalfDate.format(listItem.sentTime);
+        String currentUserHalfDate = formatterHalfDate.format(today);
+        String currentMessageDay = formatterDay.format(listItem.sentTime);
+        String currentUserDay = formatterDay.format(today);
 
 
-        messageSenderName = listItem.senderName;
-        serverTimestamp = formatterMessageTime.format(listItem.sentTime);
+        Boolean datesMatch = currentMessageHalfDate.equals(currentUserHalfDate);
+        Boolean today = currentMessageDay.equals(currentUserDay);
+        Boolean yesterday = Integer.parseInt(currentMessageDay) == Integer.parseInt(currentUserDay)-1;
+
+        if (position >= 1){
+            previousListItem = listItems.get(position-1);
+            String previousMessageDate = formatterDate.format(previousListItem.sentTime);
+
+
+            if (!currentMessageDate.equals(previousMessageDate)){
+                holder.datePillLL.setVisibility(View.VISIBLE);
+                if (today && datesMatch){
+                    holder.datePillText.setText("Today");
+                }
+                else if (yesterday && datesMatch){
+                    holder.datePillText.setText("Yesterday");
+                }
+                else {
+                    holder.datePillText.setText(currentMessageDate);
+                }
+            }
+            else {
+                holder.datePillLL.setVisibility(View.GONE);
+            }
+        }
+        else {
+            holder.datePillLL.setVisibility(View.VISIBLE);
+            if (today && datesMatch){
+                holder.datePillText.setText("Today");
+            }
+            else if (yesterday && datesMatch){
+                holder.datePillText.setText("Yesterday");
+            }
+            else {
+                holder.datePillText.setText(currentMessageDate);
+            }
+        }
+
+
+        String messageSenderName = listItem.senderName;
+        String serverTimestamp = formatterMessageTime.format(listItem.sentTime);
 
         if (!messageSenderName.equals(myName)){
             holder.messageBodySent.setText(listItem.getMessageBody());
@@ -74,18 +121,19 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder{
 
-        public TextView messageSentTime;
-        public TextView messageReceivedTime;
-        public TextView messageBodySent;
-        public TextView messageBodyReceived;
-        public TextView datePillText;
-        public ConstraintLayout sentCL;
-        public ConstraintLayout receivedCL;
+        TextView messageSentTime;
+        TextView messageReceivedTime;
+        TextView messageBodySent;
+        TextView messageBodyReceived;
+        TextView datePillText;
+        ConstraintLayout sentCL;
+        ConstraintLayout receivedCL;
+        LinearLayout datePillLL;
 
 
-        public ViewHolder(@NonNull final View itemView) {
+        ViewHolder(@NonNull final View itemView) {
             super(itemView);
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -100,9 +148,12 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
             messageBodySent = itemView.findViewById(R.id.message_body_sent_text_message);
             messageBodyReceived = itemView.findViewById(R.id.message_body_received_text_message);
+            datePillText = itemView.findViewById(R.id.date_pill_text);
 
             sentCL = itemView.findViewById(R.id.sent_message_layout);
             receivedCL = itemView.findViewById(R.id.received_message_layout);
+            datePillLL = itemView.findViewById(R.id.date_pill_linear_layout);
+
 
             messageSentTime = itemView.findViewById(R.id.time_message_sent);
             messageReceivedTime = itemView.findViewById(R.id.time_message_received);

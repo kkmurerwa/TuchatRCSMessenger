@@ -65,10 +65,10 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
         String strDateYear = formatterYear.format(listItem.getSentTime());
 
 
-        if (strDate.equals(currentDateString)){
+        if (strDate.equals(currentDateString) && strDateYear.equals(currentDateStringYear)){
             holder.sentTime.setText("Today");
         }
-        else if (Integer.parseInt(strDateDay) == Integer.parseInt(currentDateStringDay)-1){
+        else if (Integer.parseInt(strDateDay) == Integer.parseInt(currentDateStringDay)-1 && strDateYear.equals(currentDateStringYear)){
             holder.sentTime.setText("Yesterday");
         }
         else if (strDateYear.equals(currentDateStringYear)){

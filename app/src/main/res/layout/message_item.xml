@@ -1,120 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_width="match_parent"
+    android:gravity="center"
     android:layout_height="wrap_content">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="@drawable/received_text_message_background"
-        android:minWidth="40dp"
-        android:layout_marginEnd="60dp"
-        android:layout_alignParentStart="true"
-        android:paddingHorizontal="15dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="15dp"
-        android:id="@+id/received_message_layout"
+        android:background="@drawable/date_pill_background"
+        android:gravity="center"
+        android:id="@+id/date_pill_linear_layout"
+        android:layout_marginBottom="10dp"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="5dp"
         android:orientation="vertical" >
 
-
         <TextView
-            android:id="@+id/message_body_received_text_message"
+            android:id="@+id/date_pill_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:gravity="left"
-            android:text="Hey"
             android:textColor="@color/colorText"
-            android:lineSpacingExtra="3sp"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:text="" />
 
-        <TextView
-            android:id="@+id/time_message_received"
+    </LinearLayout>
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="12:20"
-            android:paddingBottom="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/message_body_received_text_message" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:background="@color/cardview_shadow_start_color"-->
-<!--        android:minWidth="40dp"-->
-<!--        android:layout_marginEnd="60dp"-->
-<!--        android:layout_centerInParent="true"-->
-<!--        android:layout_alignParentTop="true"-->
-<!--        android:paddingHorizontal="15dp"-->
-<!--        android:layout_marginStart="10dp"-->
-<!--        android:layout_marginBottom="35dp"-->
-<!--        android:id="@+id/date_pill"-->
-<!--        android:orientation="vertical" >-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/date_pill_text"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:padding="5dp"-->
-<!--            android:text="12:12:2020"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
+            android:layout_height="match_parent"
+            android:background="@drawable/received_text_message_background"
+            android:minWidth="40dp"
+            android:layout_marginEnd="100dp"
+            android:layout_alignParentStart="true"
+            android:paddingHorizontal="15dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/received_message_layout"
+            android:orientation="vertical" >
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        android:layoutDirection="ltr"
-        android:background="@drawable/sent_text_message_background"
-        android:minWidth="40dp"
-        android:layout_marginStart="60dp"
-        android:paddingHorizontal="15dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="15dp"
-        android:id="@+id/sent_message_layout">
+            <TextView
+                android:id="@+id/message_body_received_text_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:gravity="left"
+                android:text="Hey"
+                android:textColor="@color/colorText"
+                android:lineSpacingExtra="3sp"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/time_message_received"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="12:20"
+                android:paddingBottom="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/message_body_received_text_message" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        <TextView
-            android:id="@+id/message_body_sent_text_message"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="left"
-            android:lineSpacingExtra="3sp"
-            android:paddingTop="10dp"
-            android:text="Hey"
-            android:textColor="@color/colorText"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layoutDirection="ltr"
+            android:background="@drawable/sent_text_message_background"
+            android:minWidth="40dp"
+            android:layout_marginStart="100dp"
+            android:paddingHorizontal="15dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/sent_message_layout">
 
-        <TextView
-            android:id="@+id/time_message_sent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="12:20"
-            android:paddingBottom="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/message_body_sent_text_message" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/message_body_sent_text_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:lineSpacingExtra="3sp"
+                android:paddingTop="10dp"
+                android:text="Hey"
+                android:textColor="@color/colorText"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-</RelativeLayout>
+            <TextView
+                android:id="@+id/time_message_sent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="12:20"
+                android:paddingBottom="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/message_body_sent_text_message" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>
