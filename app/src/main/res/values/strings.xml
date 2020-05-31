@@ -17,4 +17,5 @@
     <string name="display_name_prompt">Enter your display name</string>
     <string name="display_name_warning">This name will be displayed to other users</string>
     <string name="continue_button">Continue</string>
+    <string name="contacts_request_message">Tuchat requires access to your contacts in order to show you contacts that are on Tuchat. Your contacts will be safe with us.</string>
 </resources>

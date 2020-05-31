@@ -1,9 +1,17 @@
 package com.example.tuchatrcsmessenger;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -25,6 +34,10 @@ public class NewConversationActivity extends AppCompatActivity {
     EditText phonNo;
     String phoneNumber;
 
+    //Contact permission variables
+    private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 0;
+    private int dismissStatus = 0;
+
     private List<ConversationsClass> contactsListItems;
 
     @Override
@@ -34,6 +47,8 @@ public class NewConversationActivity extends AppCompatActivity {
 
         //Set action bar Title
         setTitle("Start conversation");
+
+        requestContactsPermission();
 
         newConvButt = findViewById(R.id.start_conversation_button);
         phonNo = findViewById(R.id.test_phone_entry);
@@ -53,6 +68,68 @@ public class NewConversationActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+    }
+
+    public void requestContactsPermission(){
+        int readContacts = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS);
+        if (readContacts != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_CONTACTS)){
+                //Do something if request was previously denied
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_CONTACTS}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+            }
+            else {
+                //Do something if request has never been denied or accepted
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_CONTACTS}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        int readContacts = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS);
+        if (readContacts != PackageManager.PERMISSION_GRANTED) {
+            //Build dialog box
+            AlertDialog.Builder builder = new AlertDialog.Builder(NewConversationActivity.this);
+
+            builder.setMessage(R.string.contacts_request_message)
+                    .setTitle("Read contacts request").setIcon(R.drawable.user_icon);
+
+            // Add the buttons
+            builder.setPositiveButton("That's Okay", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dismissStatus = 1;
+                    requestContactsPermission();
+                }
+            });
+            builder.setNegativeButton("Nope", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dismissStatus = 0;
+                }
+            });
+
+            builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialogInterface) {
+                    if (dismissStatus==0){
+                        Toast.makeText(NewConversationActivity.this, "You cannot proceed without this permission", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                }
+            });
+
+            AlertDialog dialog = builder.create();
+
+            dialog.show();
+
+        }
+        else {
+            Toast.makeText(this, "Request accepted", Toast.LENGTH_SHORT).show();
+        }
 
     }
 
@@ -119,5 +196,13 @@ public class NewConversationActivity extends AppCompatActivity {
 
         //Animate transition to calling activity
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        //Animate transition into called activity
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 }

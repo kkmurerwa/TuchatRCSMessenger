@@ -121,6 +121,9 @@ public class MainActivity extends AppCompatActivity {
                 //Call the new conversations screen
                 Intent newConversationActivity = new Intent(MainActivity.this, NewConversationActivity.class);
                 startActivity(newConversationActivity);
+
+                //Animate transition into called activity
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
 
