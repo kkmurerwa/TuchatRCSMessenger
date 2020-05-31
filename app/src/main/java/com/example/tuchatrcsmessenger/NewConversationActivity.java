@@ -9,10 +9,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,7 +41,7 @@ public class NewConversationActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 0;
     private int dismissStatus = 0;
 
-    private List<ConversationsClass> contactsListItems;
+    private List<ContactsInfo> contactsListItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +136,49 @@ public class NewConversationActivity extends AppCompatActivity {
 
     }
 
+
+    public void getContacts(){
+        ContentResolver contentResolver = getContentResolver();
+        String contactId;
+        String displayName;
+        contactsListItems = new ArrayList<>();
+        Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+        if (cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                int hasPhoneNumber = Integer.parseInt(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)));
+                if (hasPhoneNumber > 0) {
+
+                    ContactsInfo contactsInfo = new ContactsInfo();
+                    contactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+                    displayName = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+
+                    contactsInfo.setContactId(contactId);
+                    contactsInfo.setDisplayName(displayName);
+
+                    Cursor phoneCursor = getContentResolver().query(
+                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                            null,
+                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                            new String[]{contactId},
+                            null);
+
+                    if (phoneCursor.moveToNext()) {
+                        String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+
+                        contactsInfo.setPhoneNumber(phoneNumber);
+                    }
+
+                    phoneCursor.close();
+
+                    contactsListItems.add(contactsInfo);
+                }
+            }
+
+            Toast.makeText(this, "Total Contacts: "+contactsListItems.size(), Toast.LENGTH_SHORT).show();
+        }
+        cursor.close();
+    }
+
     public String chatIdGenerator(){
         int stringLength = 20;
         ArrayList <Character> selectionSource = new ArrayList<Character>();
@@ -185,6 +231,8 @@ public class NewConversationActivity extends AppCompatActivity {
             //Show snackbar with message
             View parentLayout = findViewById(android.R.id.content);
             Snackbar.make(parentLayout, "Refreshing contacts...", Snackbar.LENGTH_LONG).show();
+
+            getContacts();
         }
         return true;
     }
@@ -205,4 +253,5 @@ public class NewConversationActivity extends AppCompatActivity {
         //Animate transition into called activity
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
+
 }
