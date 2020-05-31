@@ -27,6 +27,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout progressBarLoader;
 
     private List<ConversationsClass> listItems;
-
+    private CollectionReference dbConversationsCollection;
 
 
     @Override
@@ -98,6 +99,11 @@ public class MainActivity extends AppCompatActivity {
         assert firebaseUser != null;
         userID = firebaseUser.getUid();
 
+        //Initialize variable for Conversations retrieval
+        dbConversationsCollection = db.collection(userInfoCollection)
+                .document(userID)
+                .collection(chatRoomsCollection);
+
         //Initialize RecyclerView
         conversationsRecyclerView = findViewById(R.id.conversations_recycler_view);
         conversationsRecyclerView.setHasFixedSize(true);
@@ -106,13 +112,6 @@ public class MainActivity extends AppCompatActivity {
 
         getDataFromFireStore();
         updatesListener();
-
-//
-//        Calendar cal = Calendar.getInstance();
-//        SimpleDateFormat format1 = new SimpleDateFormat("dd MMM yy");
-//        String formattedDate = format1.format(cal.getTime());
-
-
 
         //Set on-click listener for FAB
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -131,10 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void updatesListener (){
-        db.collection(userInfoCollection)
-                .document(userID)
-                .collection(chatRoomsCollection)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+        dbConversationsCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                         getDataFromFireStore();
@@ -145,10 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void getDataFromFireStore() {
         //Get data from database
-        db.collection(userInfoCollection)
-                .document(userID)
-                .collection(chatRoomsCollection)
-                .orderBy("sentTime")
+        dbConversationsCollection.orderBy("sentTime")
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -164,10 +157,6 @@ public class MainActivity extends AppCompatActivity {
 
                             for (DocumentSnapshot d : list){
                                 ConversationsClass p = d.toObject(ConversationsClass.class);
-
-                                Calendar cal;
-
-
 
                                 ConversationsClass listItem = new ConversationsClass(
                                         p.getSenderName(),
