@@ -1,83 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:orientation="vertical"
     android:layout_height="match_parent"
     tools:context=".MainActivity" >
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/new_conversations_recycler_view"
-        android:layout_width="match_parent"
-        android:visibility="gone"
-        android:paddingBottom="@dimen/message_padding"
-        android:layout_height="match_parent"
-        android:background="@color/colorPrimary" />
-
-
-    <LinearLayout
-        android:id="@+id/new_conversations_progress_bar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:visibility="gone"
-        android:background="@color/colorPrimary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/enter_phone_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="visible"
-        android:background="@color/colorPrimary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <EditText
-            android:layout_marginHorizontal="30dp"
-            android:layout_marginVertical="20dp"
-            android:hint="Enter phone number of recipient"
-            android:paddingBottom="@dimen/text_entry_padding"
-            android:textColorHint="#938E8E"
-            android:textColor="@color/colorText"
+        <LinearLayout
+            android:id="@+id/new_conversations_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
             android:gravity="center"
-            android:id="@+id/test_phone_entry"
-            android:layout_width="match_parent"
-            android:backgroundTint="@color/colorAccent"
-            android:layout_height="wrap_content"
-            android:inputType="phone"
-            android:importantForAutofill="no" />
+            android:orientation="horizontal"
+            android:visibility="visible"
+            android:background="@color/colorPrimary">
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="30dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginBottom="10dp"
-            android:text="@string/continue_button"
-            android:textAllCaps="false"
-            android:id="@+id/start_conversation_button"
-            android:padding="12dp"
-            android:textSize="24sp"
-            android:background="@drawable/rounded_sign_in_button"
-            android:textColor="@color/colorAccent"/>
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-    </LinearLayout>
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:id="@+id/new_conversations_recycler_view"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingBottom="@dimen/message_padding"
+            android:background="@color/colorPrimary" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -104,4 +56,4 @@
 
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

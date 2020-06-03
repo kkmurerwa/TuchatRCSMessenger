@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
@@ -19,18 +20,25 @@ import android.provider.ContactsContract;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public class NewConversationActivity extends AppCompatActivity {
@@ -43,20 +51,24 @@ public class NewConversationActivity extends AppCompatActivity {
     final String userInfoCollection = "users";
 
     //Firestore Path Variables
-    private String contactsCollection;
+    private String contactsCollection = "contacts";
     private String userID;
-    private String myContactsSubcollection;
+    private String myContactsSubcollection = "My Contacts";
 
     //New Conversations activity variables
-    Button newConvButt;
-    EditText phonNo;
-    String phoneNumber;
+    private RecyclerView newConversationRecyclerView;
+    private LinearLayout progressBarLayout;
+    private LinearLayout placeHolderLayout;
 
     //Contact permission variables
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 0;
     private int dismissStatus = 0;
 
     private List<ContactsInfo> contactsListItems;
+    private List<ContactsInfo> contactsOnTuchatListItem;
+    private CollectionReference dbContactsCollection;
+    private List<ContactsInfo> contactsOnTuchatFromFireStore;
+    private ContactsAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,27 +78,34 @@ public class NewConversationActivity extends AppCompatActivity {
         //Set action bar Title
         setTitle("Start conversation");
 
+        //Initialize firebase variables
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+        db = FirebaseFirestore.getInstance();
+        assert firebaseUser != null;
+        userID = firebaseUser.getUid();
+
+        //Initialize variable for Conversations retrieval
+        dbContactsCollection = db.collection(contactsCollection)
+                .document(userID)
+                .collection(myContactsSubcollection);
+
+
+        //Initialize activity elements
+        newConversationRecyclerView = findViewById(R.id.new_conversations_recycler_view);
+        newConversationRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        newConversationRecyclerView.setHasFixedSize(true);
+
+
+        progressBarLayout = findViewById(R.id.new_conversations_progress_bar);
+        placeHolderLayout = findViewById(R.id.new_conversations_empty_placeholder);
+
         requestContactsPermission();
+        contactsOnTuchatListItem = new ArrayList<>();
+        contactsOnTuchatFromFireStore = new ArrayList<>();
 
-        newConvButt = findViewById(R.id.start_conversation_button);
-        phonNo = findViewById(R.id.test_phone_entry);
-
-
-        newConvButt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                phoneNumber = phonNo.getText().toString().trim();
-
-                String generatedString = chatIdGenerator();
-
-                Intent startConversation = new Intent(NewConversationActivity.this, ChatsActivity.class);
-                startConversation.putExtra("Phone Number", phoneNumber);
-                startConversation.putExtra("Chat ID", generatedString);
-                startActivity(startConversation);
-                finish();
-            }
-        });
-
+        getContactsFromFirestore();
+        updatesListener();
     }
 
     public void requestContactsPermission(){
@@ -167,7 +186,6 @@ public class NewConversationActivity extends AppCompatActivity {
                     contactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
                     displayName = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
-                    contactsInfo.setContactId(contactId);
                     contactsInfo.setDisplayName(displayName);
 
                     Cursor phoneCursor = getContentResolver().query(
@@ -178,7 +196,7 @@ public class NewConversationActivity extends AppCompatActivity {
                             null);
 
                     if (phoneCursor.moveToNext()) {
-                        String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)).replaceAll("\\s","");
 
                         contactsInfo.setPhoneNumber(phoneNumber);
                     }
@@ -250,10 +268,12 @@ public class NewConversationActivity extends AppCompatActivity {
             getContacts();
 
             if (!contactsListItems.isEmpty()){
-                Toast.makeText(this, "This fucker has something", Toast.LENGTH_SHORT).show();
-
-                checkContactsAgainstFirestoreUsers();
-
+                try {
+                    checkContactsAgainstFirestoreUsers();
+                }
+                catch (Exception e){
+                    Toast.makeText(this, "Error: " +e, Toast.LENGTH_SHORT).show();
+                }
             }
 
         }
@@ -261,8 +281,108 @@ public class NewConversationActivity extends AppCompatActivity {
     }
 
     private void checkContactsAgainstFirestoreUsers() {
+        db.collection(userInfoCollection)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+
+                            for (ContactsInfo contact : contactsListItems){
+                                String phoneNumber = contact.getPhoneNumber();
+
+                                for (DocumentSnapshot d : list) {
+                                    if (Objects.requireNonNull(d.getString("User Phone")).equals(phoneNumber)){
+                                        saveContactsToFirestore(contact);
+                                    }
+                                }
+                            }
 
 
+
+                        }
+                    }
+                });
+    }
+
+    private void updatesListener (){
+        dbContactsCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                getContactsFromFirestore();
+            }
+        });
+    }
+
+    private void saveContactsToFirestore (ContactsInfo contactObject){
+        dbContactsCollection.document(contactObject.getPhoneNumber())
+            .set(contactObject)
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    //Do stuff
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    //Do stuff
+                }
+            });
+    }
+
+    private void getContactsFromFirestore(){
+        dbContactsCollection
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (!queryDocumentSnapshots.isEmpty()){
+                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+
+                            contactsOnTuchatFromFireStore.clear();
+
+
+                            for (DocumentSnapshot d : list){
+                                ContactsInfo p = d.toObject(ContactsInfo.class);
+
+                                Toast.makeText(NewConversationActivity.this, "Size: ", Toast.LENGTH_SHORT).show();
+
+
+                                contactsOnTuchatFromFireStore.add(p);
+                            }
+
+
+                            adapter = new ContactsAdapter(contactsOnTuchatFromFireStore, NewConversationActivity.this);
+                            newConversationRecyclerView.setAdapter(adapter);
+
+
+                            newConversationRecyclerView.setVisibility(View.VISIBLE);
+                            progressBarLayout.setVisibility(View.GONE);
+                            placeHolderLayout.setVisibility(View.GONE);
+                        }
+                        else {
+                            newConversationRecyclerView.setVisibility(View.GONE);
+                            progressBarLayout.setVisibility(View.GONE);
+                            placeHolderLayout.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+    }
+
+    public void nextActivityCaller(String phoneNumber){
+        String generatedString = chatIdGenerator();
+
+        Intent startConversation = new Intent(NewConversationActivity.this, ChatsActivity.class);
+        startConversation.putExtra("Phone Number", phoneNumber);
+        startConversation.putExtra("Chat ID", generatedString);
+        startActivity(startConversation);
+
+        //Animate transition into called activity
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+
+        finish();
     }
 
     @Override
