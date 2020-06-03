@@ -25,14 +25,29 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class NewConversationActivity extends AppCompatActivity {
+    //Firebase
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser firebaseUser;
+    private FirebaseFirestore db;
 
-    //Test activity variables
+    //Firebase path variables
+    final String userInfoCollection = "users";
+
+    //Firestore Path Variables
+    private String contactsCollection;
+    private String userID;
+    private String myContactsSubcollection;
+
+    //New Conversations activity variables
     Button newConvButt;
     EditText phonNo;
     String phoneNumber;
@@ -233,8 +248,21 @@ public class NewConversationActivity extends AppCompatActivity {
             Snackbar.make(parentLayout, "Refreshing contacts...", Snackbar.LENGTH_LONG).show();
 
             getContacts();
+
+            if (!contactsListItems.isEmpty()){
+                Toast.makeText(this, "This fucker has something", Toast.LENGTH_SHORT).show();
+
+                checkContactsAgainstFirestoreUsers();
+
+            }
+
         }
         return true;
+    }
+
+    private void checkContactsAgainstFirestoreUsers() {
+
+
     }
 
     @Override
