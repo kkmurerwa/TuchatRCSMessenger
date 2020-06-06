@@ -131,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     private void updatesListener (){
         dbConversationsCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
@@ -140,7 +139,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-
 
     private void getDataFromFireStore() {
         //Get data from database
@@ -187,7 +185,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
