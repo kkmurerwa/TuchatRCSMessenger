@@ -15,6 +15,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +39,15 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
     private String currentDateString;
     private String currentDateStringDay;
     private String currentDateStringYear;
+
+    //Firebase
+    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    //Firebase path variables
+    String chatRoomsCollection = "chatrooms";
+    String messagesCollection = "messages";
+
 
 
 
@@ -64,22 +81,24 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
 
         String strDateYear = formatterYear.format(listItem.getSentTime());
 
+        getLastMessage(listItem.getChatRoomId(), holder.messageBody, holder.sentTime);
 
-        if (strDate.equals(currentDateString) && strDateYear.equals(currentDateStringYear)){
-            holder.sentTime.setText("Today");
-        }
-        else if (Integer.parseInt(strDateDay) == Integer.parseInt(currentDateStringDay)-1 && strDateYear.equals(currentDateStringYear)){
-            holder.sentTime.setText("Yesterday");
-        }
-        else if (strDateYear.equals(currentDateStringYear)){
-            holder.sentTime.setText(formatterHalfDate.format(listItem.getSentTime()));
-        }
-        else {
-            holder.sentTime.setText(strDate);
-        }
+
+//        if (strDate.equals(currentDateString) && strDateYear.equals(currentDateStringYear)){
+//            holder.sentTime.setText("Today");
+//        }
+//        else if (Integer.parseInt(strDateDay) == Integer.parseInt(currentDateStringDay)-1 && strDateYear.equals(currentDateStringYear)){
+//            holder.sentTime.setText("Yesterday");
+//        }
+//        else if (strDateYear.equals(currentDateStringYear)){
+//            holder.sentTime.setText(formatterHalfDate.format(listItem.getSentTime()));
+//        }
+//        else {
+//            holder.sentTime.setText(strDate);
+//        }
 
         holder.sender.setText(listItem.getSenderName());
-        holder.messageBody.setText(listItem.getMessageBody());
+//        holder.messageBody.setText(listItem.getMessageBody());
         String readStatus = listItem.getReadStatus();
 
         //Show unread messages
@@ -128,6 +147,49 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
             //Animate transition into called activity
             ((MainActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         }
+
+    }
+
+    //Get last message
+    private void getLastMessage(final String chatRoomID, final TextView lastMessage, final TextView sentTime){
+        String lastConversationMessage = "none";
+        Date getLastConversationSentTime;
+
+        db.collection(chatRoomsCollection)
+                .document(chatRoomID)
+                .collection(messagesCollection)
+                .orderBy("sentTime")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+
+                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+
+                            int index = list.size()-1;
+
+                            ConversationsClass thisItem = list.get(index).toObject(ConversationsClass.class);
+
+                            Toast.makeText(context, "Hello " +thisItem.getMessageBody(), Toast.LENGTH_SHORT).show();
+
+                            lastMessage.setText(thisItem.getMessageBody());
+                            sentTime.setText( formatterFullDate.format(thisItem.getSentTime()));
+
+
+                        }
+                        else {
+                            Toast.makeText(context, "I am empty inside!", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(context, "Sadness noises", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
     }
 

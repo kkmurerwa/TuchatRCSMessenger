@@ -354,11 +354,11 @@ public class ChatsActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.delete_conversations) {
-            //Code to refresh contacts
+            //Code to delete conversation
 
             //Show snackbar with message
             View parentLayout = findViewById(android.R.id.content);
-            Snackbar.make(parentLayout, "Refreshing contacts...", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(parentLayout, "Deleted Conversation...", Snackbar.LENGTH_LONG).show();
         }
         return true;
     }
