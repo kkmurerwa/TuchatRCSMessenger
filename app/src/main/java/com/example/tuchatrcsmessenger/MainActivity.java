@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void getDataFromFireStore() {
+    public void getDataFromFireStore() {
         //Get data from database
         dbConversationsCollection.orderBy("sentTime")
                 .get()

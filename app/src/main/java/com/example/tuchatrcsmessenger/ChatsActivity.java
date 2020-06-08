@@ -219,7 +219,7 @@ public class ChatsActivity extends AppCompatActivity {
 
 
         String chtRmId = chatRoomID;
-        String rdstatus = "unread";
+        String rdstatus = "read";
 
 
         MessagesClass messagesClass = new MessagesClass(
@@ -303,7 +303,7 @@ public class ChatsActivity extends AppCompatActivity {
         //Get current time and date
         date = new Date();
         date.getTime();
-        String rdstatus = "unread";
+        String rdstatus = "read";
         String chtRmId = chatRoomID;
 
 
@@ -312,7 +312,7 @@ public class ChatsActivity extends AppCompatActivity {
                 senderName,
                 message,
                 date,
-                "read",
+                rdstatus,
                 chtRmId
         );
 
