@@ -36,8 +36,7 @@
             android:parentActivityName=".WelcomeScreen"></activity>
         <activity android:name=".WelcomeScreen"></activity>
         <activity
-            android:name=".MainActivity"
-            android:launchMode="singleTop"></activity>
+            android:name=".MainActivity"></activity>
     </application>
 
 </manifest>
