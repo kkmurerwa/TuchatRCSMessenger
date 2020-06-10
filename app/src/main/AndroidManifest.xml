@@ -21,7 +21,7 @@
             <!--Stuff here-->
         </activity>
         <activity
-            android:name=".ScreenNameSelection"
+            android:name=".ScreenNameSelectionActivity"
             android:parentActivityName=".SignInActivity">
             <!--Stuff here-->
         </activity>
@@ -33,10 +33,15 @@
         </activity>
         <activity
             android:name=".SignInActivity"
-            android:parentActivityName=".WelcomeScreen"></activity>
-        <activity android:name=".WelcomeScreen"></activity>
+            android:parentActivityName=".WelcomeScreen">
+            <!-- Stuff here -->
+        </activity>
+        <activity android:name=".WelcomeScreen">
+            <!-- Stuff here -->
+        </activity>
         <activity
-            android:name=".MainActivity"></activity>
+            android:name=".MainActivity">
+            <!-- Stuff here -->
+        </activity>
     </application>
-
 </manifest>

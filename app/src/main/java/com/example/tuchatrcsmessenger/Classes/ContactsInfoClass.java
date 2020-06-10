@@ -1,6 +1,6 @@
-package com.example.tuchatrcsmessenger;
+package com.example.tuchatrcsmessenger.Classes;
 
-public class ContactsInfo {
+public class ContactsInfoClass {
     private String displayName;
     private String phoneNumber;
 

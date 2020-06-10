@@ -1,13 +1,5 @@
 package com.example.tuchatrcsmessenger;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -23,13 +15,22 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.tuchatrcsmessenger.Adapters.ContactsAdapter;
+import com.example.tuchatrcsmessenger.Classes.ContactsInfoClass;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -64,10 +65,10 @@ public class NewConversationActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 0;
     private int dismissStatus = 0;
 
-    private List<ContactsInfo> contactsListItems;
-    private List<ContactsInfo> contactsOnTuchatListItem;
+    private List<ContactsInfoClass> contactsListItems;
+    private List<ContactsInfoClass> contactsOnTuchatListItem;
     private CollectionReference dbContactsCollection;
-    private List<ContactsInfo> contactsOnTuchatFromFireStore;
+    private List<ContactsInfoClass> contactsOnTuchatFromFireStore;
     private ContactsAdapter adapter;
 
     @Override
@@ -182,11 +183,11 @@ public class NewConversationActivity extends AppCompatActivity {
                 int hasPhoneNumber = Integer.parseInt(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)));
                 if (hasPhoneNumber > 0) {
 
-                    ContactsInfo contactsInfo = new ContactsInfo();
+                    ContactsInfoClass contactsInfoClass = new ContactsInfoClass();
                     contactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
                     displayName = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
-                    contactsInfo.setDisplayName(displayName);
+                    contactsInfoClass.setDisplayName(displayName);
 
                     Cursor phoneCursor = getContentResolver().query(
                             ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
@@ -198,12 +199,12 @@ public class NewConversationActivity extends AppCompatActivity {
                     if (phoneCursor.moveToNext()) {
                         String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)).replaceAll("\\s","");
 
-                        contactsInfo.setPhoneNumber(phoneNumber);
+                        contactsInfoClass.setPhoneNumber(phoneNumber);
                     }
 
                     phoneCursor.close();
 
-                    contactsListItems.add(contactsInfo);
+                    contactsListItems.add(contactsInfoClass);
                 }
             }
 
@@ -289,7 +290,7 @@ public class NewConversationActivity extends AppCompatActivity {
                         if (!queryDocumentSnapshots.isEmpty()) {
                             List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
 
-                            for (ContactsInfo contact : contactsListItems){
+                            for (ContactsInfoClass contact : contactsListItems){
                                 String phoneNumber = contact.getPhoneNumber();
 
                                 for (DocumentSnapshot d : list) {
@@ -315,7 +316,7 @@ public class NewConversationActivity extends AppCompatActivity {
         });
     }
 
-    private void saveContactsToFirestore (ContactsInfo contactObject){
+    private void saveContactsToFirestore (ContactsInfoClass contactObject){
         dbContactsCollection.document(contactObject.getPhoneNumber())
             .set(contactObject)
             .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -345,7 +346,7 @@ public class NewConversationActivity extends AppCompatActivity {
 
 
                             for (DocumentSnapshot d : list){
-                                ContactsInfo p = d.toObject(ContactsInfo.class);
+                                ContactsInfoClass p = d.toObject(ContactsInfoClass.class);
 
                                 Toast.makeText(NewConversationActivity.this, "Size: ", Toast.LENGTH_SHORT).show();
 

@@ -1,11 +1,5 @@
 package com.example.tuchatrcsmessenger;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +10,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.tuchatrcsmessenger.Adapters.MessagesAdapter;
+import com.example.tuchatrcsmessenger.Classes.MessagesClass;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
@@ -28,11 +30,10 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-//TODO: Fix bug on message ordering for larger messages
 
 public class ChatsActivity extends AppCompatActivity {
     //Variables for passed intent Extras
@@ -123,13 +124,6 @@ public class ChatsActivity extends AppCompatActivity {
 
         Button sendMessage = findViewById(R.id.send_message_button);
         typedMessage = findViewById(R.id.typed_message);
-
-        //Get current time and date
-
-
-
-
-
 
         //Set button onClickListener
         sendMessage.setOnClickListener(new View.OnClickListener() {

@@ -1,7 +1,6 @@
-package com.example.tuchatrcsmessenger;
+package com.example.tuchatrcsmessenger.Adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,15 +10,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.example.tuchatrcsmessenger.Classes.ContactsInfoClass;
+import com.example.tuchatrcsmessenger.NewConversationActivity;
+import com.example.tuchatrcsmessenger.R;
+
 import java.util.List;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> {
-    private List<ContactsInfo> listItems;
+    private List<ContactsInfoClass> listItems;
     private Context context;
 
-    public ContactsAdapter(List<ContactsInfo> listItems, Context context) {
+    public ContactsAdapter(List<ContactsInfoClass> listItems, Context context) {
         this.listItems = listItems;
         this.context = context;
     }
@@ -35,7 +36,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        ContactsInfo listItem = listItems.get(position);
+        ContactsInfoClass listItem = listItems.get(position);
 
         holder.contactDisplayName.setText(listItem.getDisplayName());
         holder.contactPhoneNumber.setText(listItem.getPhoneNumber());
