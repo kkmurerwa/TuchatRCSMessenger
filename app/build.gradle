@@ -56,8 +56,5 @@ dependencies {
 
     //The dependency below helps create circle images
     implementation 'de.hdodenhof:circleimageview:3.1.0'
-
-    //Push notifications library
-    implementation 'com.google.firebase:firebase-messaging:20.2.0'
 }
 apply plugin: 'com.google.gms.google-services'

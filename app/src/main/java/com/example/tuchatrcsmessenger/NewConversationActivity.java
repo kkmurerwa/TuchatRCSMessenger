@@ -71,6 +71,8 @@ public class NewConversationActivity extends AppCompatActivity {
     private List<ContactsInfoClass> contactsOnTuchatFromFireStore;
     private ContactsAdapter adapter;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

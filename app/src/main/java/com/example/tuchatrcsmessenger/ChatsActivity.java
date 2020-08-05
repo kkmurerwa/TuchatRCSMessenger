@@ -71,6 +71,8 @@ public class ChatsActivity extends AppCompatActivity {
 
     String message;
 
+    boolean mIsNewConversation;
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +83,7 @@ public class ChatsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         phoneNumber = intent.getStringExtra("Phone Number");
 
-        if (phoneNumber== null){
+        if (phoneNumber==null){
             senderName = intent.getStringExtra("Sender Name");
             setTitle(senderName);
         }
@@ -142,9 +144,12 @@ public class ChatsActivity extends AppCompatActivity {
             }
         });
 
+
         retrieveUserName();
         getMessagesFromFirestore();
         updatesListener();
+
+
     }
 
     private void updatesListener (){
