@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tuchat</string>
+    <string name="phone_number_prompt">Entrez votre numéro de téléphone</string>
+    <string name="messenger_logo">C\'est le logo du app</string>
+    <string name="display_name_prompt">Entrez votre nom d\'affichage</string>
+    <string name="display_name_warning">Ce nom sera affiché aux autres utilisateurs</string>
+    <string name="phone_number_auth_warning">Tuchat vous enverra un SMS pour vérifier votre numéro de téléphone.          Des frais de transport peuvent s\'appliquer</string>
+    <string name="app_description">Le premier RCS de Ken</string>
+    <string name="please_wait_string">Attendez, s\'il vous plaît...</string>
+    <string name="disclaimer">En cliquant sur le bouton \"Commencer à utiliser Tuchat\", vous acceptez notre</string>
+    <string name="sign_in_string">Se connecter</string>
+    <string name="continue_button">Continuer</string>
+    <string name="contacts_request_message">Tuchat a besoin d\'accéder à vos contacts afin de vous montrer les contacts qui sont sur Tuchat. Vos contacts seront en sécurité avec nous.</string>
+    <string name="welcome_text">Bienvenue á Tuchat</string>
+</resources>

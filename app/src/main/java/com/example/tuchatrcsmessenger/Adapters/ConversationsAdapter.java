@@ -192,14 +192,14 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
 //                            sentTime.setText( formatterFullDate.format(thisItem.getSentTime()));
                         }
                         else {
-                            Toast.makeText(context, "I am empty inside!", Toast.LENGTH_SHORT).show();
+                            //
                         }
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(context, "Sadness noises", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Failed to retrieve your conversations", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

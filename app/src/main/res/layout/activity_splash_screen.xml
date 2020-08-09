@@ -31,7 +31,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome to Tuchat"
+        android:text="@string/welcome_text"
         android:textSize="16sp"
         android:textColor="@color/colorText"/>
 

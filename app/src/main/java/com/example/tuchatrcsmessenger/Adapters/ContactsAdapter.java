@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -66,8 +65,6 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         @Override
         public void onClick(View view) {
             int pos = getAdapterPosition();
-
-            Toast.makeText(context, "I have been clicked", Toast.LENGTH_SHORT).show();
             String phoneNumber = listItems.get(pos).getPhoneNumber();
 
             ((NewConversationActivity) context).nextActivityCaller(phoneNumber);

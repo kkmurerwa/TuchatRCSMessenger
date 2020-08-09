@@ -209,10 +209,18 @@ public class NewConversationActivity extends AppCompatActivity {
                     contactsListItems.add(contactsInfoClass);
                 }
             }
-
-            Toast.makeText(this, "Total Contacts: "+contactsListItems.size(), Toast.LENGTH_SHORT).show();
         }
         cursor.close();
+
+        if (!contactsListItems.isEmpty()){
+            try {
+                checkContactsAgainstFirestoreUsers();
+            }
+            catch (Exception e){
+                //Error caught with no action
+            }
+        }
+
     }
 
     public String chatIdGenerator(){
@@ -263,22 +271,10 @@ public class NewConversationActivity extends AppCompatActivity {
 
         if (id == R.id.refresh_contacts) {
             //Code to refresh contacts
-
-            //Show snackbar with message
+            //Show snack bar with message
             View parentLayout = findViewById(android.R.id.content);
             Snackbar.make(parentLayout, "Refreshing contacts...", Snackbar.LENGTH_LONG).show();
-
             getContacts();
-
-            if (!contactsListItems.isEmpty()){
-                try {
-                    checkContactsAgainstFirestoreUsers();
-                }
-                catch (Exception e){
-                    Toast.makeText(this, "Error: " +e, Toast.LENGTH_SHORT).show();
-                }
-            }
-
         }
         return true;
     }
@@ -294,6 +290,13 @@ public class NewConversationActivity extends AppCompatActivity {
 
                             for (ContactsInfoClass contact : contactsListItems){
                                 String phoneNumber = contact.getPhoneNumber();
+
+                                //Replace phone number string if it starts with 0 with +254
+                                if (phoneNumber.charAt(0) == '0'){
+                                    phoneNumber = phoneNumber.replaceFirst("0", "+254");
+                                }
+
+
 
                                 for (DocumentSnapshot d : list) {
                                     if (Objects.requireNonNull(d.getString("User Phone")).equals(phoneNumber)){
@@ -349,8 +352,6 @@ public class NewConversationActivity extends AppCompatActivity {
 
                             for (DocumentSnapshot d : list){
                                 ContactsInfoClass p = d.toObject(ContactsInfoClass.class);
-
-                                Toast.makeText(NewConversationActivity.this, "Size: ", Toast.LENGTH_SHORT).show();
 
 
                                 contactsOnTuchatFromFireStore.add(p);

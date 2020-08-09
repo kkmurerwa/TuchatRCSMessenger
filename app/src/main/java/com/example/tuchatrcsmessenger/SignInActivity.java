@@ -149,7 +149,6 @@ public class SignInActivity extends AppCompatActivity {
 
         @Override
         public void onVerificationFailed(@NonNull FirebaseException e) {
-            Toast.makeText(SignInActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
             ProgressBarController controller = new ProgressBarController();
             controller.hideProgressbar(signInButton, progressBarLayout);
         }
@@ -203,9 +202,6 @@ public class SignInActivity extends AppCompatActivity {
                             //Hide progress bar
                             ProgressBarController controller = new ProgressBarController();
                             controller.hideProgressbar(signInButton, progressBarLayout);
-
-                            //Display error message
-                            Toast.makeText(SignInActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
                     }
                 });
