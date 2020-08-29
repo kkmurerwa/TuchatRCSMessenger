@@ -192,13 +192,12 @@ public class ChatsActivity extends AppCompatActivity {
                             for (DocumentSnapshot d : list) {
                                 MessagesClass p = d.toObject(MessagesClass.class);
 
-
                                 MessagesClass listItem = new MessagesClass(
                                         p.getSenderName(),
                                         p.getMessageBody(),
                                         p.getSentTime(),
                                         p.getReadStatus(),
-                                        d.getId()
+                                        d.getId(), p.getUserId()
                                 );
                                 messagesList.add(listItem);
                             }
@@ -238,7 +237,7 @@ public class ChatsActivity extends AppCompatActivity {
                 message,
                 date,
                 rdstatus,
-                chtRmId
+                chtRmId, FirebaseAuth.getInstance().getUid()
         );
 
         dbPath.add(messagesClass)
@@ -323,7 +322,7 @@ public class ChatsActivity extends AppCompatActivity {
                 message,
                 date,
                 rdstatus,
-                chtRmId
+                chtRmId, FirebaseAuth.getInstance().getUid()
         );
 
         MessagesClass messagesClassReceiver = new MessagesClass(
@@ -331,7 +330,7 @@ public class ChatsActivity extends AppCompatActivity {
                 message,
                 date,
                 rdstatus,
-                chtRmId
+                chtRmId, FirebaseAuth.getInstance().getUid()
         );
 
         db.collection(userInfoCollection)
