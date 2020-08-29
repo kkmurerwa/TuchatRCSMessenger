@@ -48,10 +48,6 @@ public class SignInActivity extends AppCompatActivity {
         //Firebase Auth initialization
         firebaseAuth = FirebaseAuth.getInstance();
 
-        //Hide action bar
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.hide();
-
         //Initialize phone number EditText
         phoneNumber = findViewById(R.id.phone_entry);
 

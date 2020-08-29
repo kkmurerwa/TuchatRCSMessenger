@@ -62,10 +62,6 @@ public class ScreenNameSelectionActivity extends AppCompatActivity {
             userPhoneNumber = (String) savedInstanceState.getSerializable("Phone Number");
         }
 
-        //Hide action bar
-        ActionBar actionBar = getSupportActionBar();
-        Objects.requireNonNull(actionBar).hide();
-
         //Initialize firebase variables
         firebaseAuth = FirebaseAuth.getInstance();
         userID = firebaseAuth.getUid();

@@ -19,10 +19,6 @@ public class WelcomeScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome_screen);
 
-        //Hide action bar
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.hide();
-
         //Create action listener for sign in button
         signInButton = findViewById(R.id.get_started);
         signInButton.setOnClickListener(new View.OnClickListener() {
