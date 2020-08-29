@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -284,7 +285,16 @@ public class NewConversationActivity extends AppCompatActivity {
             //Show snack bar with message
             View parentLayout = findViewById(android.R.id.content);
             Snackbar.make(parentLayout, "Refreshing contacts...", Snackbar.LENGTH_LONG).show();
-            getContacts();
+
+
+            final Handler handler = new Handler();
+            final Runnable r = new Runnable() {
+                public void run() {
+                    handler.postDelayed(this, 10);
+                    getContacts();
+                }
+            };
+
         }
         return true;
     }
