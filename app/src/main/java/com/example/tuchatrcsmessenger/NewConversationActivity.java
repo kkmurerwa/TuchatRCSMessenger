@@ -286,7 +286,6 @@ public class NewConversationActivity extends AppCompatActivity {
             View parentLayout = findViewById(android.R.id.content);
             Snackbar.make(parentLayout, "Refreshing contacts...", Snackbar.LENGTH_LONG).show();
 
-
             final Handler handler = new Handler();
             final Runnable r = new Runnable() {
                 public void run() {

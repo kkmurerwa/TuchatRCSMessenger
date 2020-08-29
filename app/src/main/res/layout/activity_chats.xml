@@ -7,8 +7,9 @@
     android:orientation="vertical"
     tools:context=".ChatsActivity">
 
-    <include layout="@layout/toolbar"
-        android:id="@+id/chats_toolbar"/>
+    <include
+        android:id="@+id/chats_toolbar"
+        layout="@layout/toolbar" />
 
     <RelativeLayout
         android:id="@+id/linearLayout"
