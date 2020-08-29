@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -72,13 +73,25 @@ public class NewConversationActivity extends AppCompatActivity {
     private ContactsAdapter adapter;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_conversation);
 
         //Set action bar Title
+
+        Toolbar toolbar = findViewById(R.id.new_chat_toolbar);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         setTitle("Start conversation");
 
         //Initialize firebase variables
@@ -111,15 +124,14 @@ public class NewConversationActivity extends AppCompatActivity {
         updatesListener();
     }
 
-    public void requestContactsPermission(){
+    public void requestContactsPermission() {
         int readContacts = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS);
         if (readContacts != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_CONTACTS)){
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_CONTACTS)) {
                 //Do something if request was previously denied
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.READ_CONTACTS}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
-            }
-            else {
+            } else {
                 //Do something if request has never been denied or accepted
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.READ_CONTACTS}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
@@ -155,7 +167,7 @@ public class NewConversationActivity extends AppCompatActivity {
             builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialogInterface) {
-                    if (dismissStatus==0){
+                    if (dismissStatus == 0) {
                         Toast.makeText(NewConversationActivity.this, "You cannot proceed without this permission", Toast.LENGTH_SHORT).show();
                         finish();
                     }
@@ -166,15 +178,14 @@ public class NewConversationActivity extends AppCompatActivity {
 
             dialog.show();
 
-        }
-        else {
+        } else {
             Toast.makeText(this, "Request accepted", Toast.LENGTH_SHORT).show();
         }
 
     }
 
 
-    public void getContacts(){
+    public void getContacts() {
         ContentResolver contentResolver = getContentResolver();
         String contactId;
         String displayName;
@@ -199,7 +210,7 @@ public class NewConversationActivity extends AppCompatActivity {
                             null);
 
                     if (phoneCursor.moveToNext()) {
-                        String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)).replaceAll("\\s","");
+                        String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)).replaceAll("\\s", "");
 
                         contactsInfoClass.setPhoneNumber(phoneNumber);
                     }
@@ -212,46 +223,45 @@ public class NewConversationActivity extends AppCompatActivity {
         }
         cursor.close();
 
-        if (!contactsListItems.isEmpty()){
+        if (!contactsListItems.isEmpty()) {
             try {
                 checkContactsAgainstFirestoreUsers();
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 //Error caught with no action
             }
         }
 
     }
 
-    public String chatIdGenerator(){
+    public String chatIdGenerator() {
         int stringLength = 20;
-        ArrayList <Character> selectionSource = new ArrayList<Character>();
-        ArrayList <Character> arrayOfRandomCharacters = new ArrayList<Character>();
+        ArrayList<Character> selectionSource = new ArrayList<Character>();
+        ArrayList<Character> arrayOfRandomCharacters = new ArrayList<Character>();
         String caps = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String small = "abcdefghijklmnopqrstuvwxyz";
         String numbers = "1234567890";
 
         //Append items in each string to arraylist
-        for (char i:caps.toCharArray()){
+        for (char i : caps.toCharArray()) {
             selectionSource.add(i);
         }
 
-        for (char i:small.toCharArray()){
+        for (char i : small.toCharArray()) {
             selectionSource.add(i);
         }
 
-        for (char i:numbers.toCharArray()){
+        for (char i : numbers.toCharArray()) {
             selectionSource.add(i);
         }
         // System.out.println(selectionSource);
-        for(int i = 0; i<stringLength; i++){
+        for (int i = 0; i < stringLength; i++) {
             Random rand = new Random();
             // Obtain a number between [0 - 9].
             int n = rand.nextInt(selectionSource.size());
             arrayOfRandomCharacters.add(selectionSource.get(n));
         }
         StringBuilder sb = new StringBuilder();
-        for (char i: arrayOfRandomCharacters){
+        for (char i : arrayOfRandomCharacters) {
             sb.append(i);
         }
         return sb.toString();
@@ -288,23 +298,21 @@ public class NewConversationActivity extends AppCompatActivity {
                         if (!queryDocumentSnapshots.isEmpty()) {
                             List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
 
-                            for (ContactsInfoClass contact : contactsListItems){
+                            for (ContactsInfoClass contact : contactsListItems) {
                                 String phoneNumber = contact.getPhoneNumber();
 
                                 //Replace phone number string if it starts with 0 with +254
-                                if (phoneNumber.charAt(0) == '0'){
+                                if (phoneNumber.charAt(0) == '0') {
                                     phoneNumber = phoneNumber.replaceFirst("0", "+254");
                                 }
 
 
-
                                 for (DocumentSnapshot d : list) {
-                                    if (Objects.requireNonNull(d.getString("User Phone")).equals(phoneNumber)){
+                                    if (Objects.requireNonNull(d.getString("User Phone")).equals(phoneNumber)) {
                                         saveContactsToFirestore(contact);
                                     }
                                 }
                             }
-
 
 
                         }
@@ -312,7 +320,7 @@ public class NewConversationActivity extends AppCompatActivity {
                 });
     }
 
-    private void updatesListener (){
+    private void updatesListener() {
         dbContactsCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
@@ -321,36 +329,36 @@ public class NewConversationActivity extends AppCompatActivity {
         });
     }
 
-    private void saveContactsToFirestore (ContactsInfoClass contactObject){
+    private void saveContactsToFirestore(ContactsInfoClass contactObject) {
         dbContactsCollection.document(contactObject.getPhoneNumber())
-            .set(contactObject)
-            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    //Do stuff
-                }
-            })
-            .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    //Do stuff
-                }
-            });
+                .set(contactObject)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        //Do stuff
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        //Do stuff
+                    }
+                });
     }
 
-    private void getContactsFromFirestore(){
+    private void getContactsFromFirestore() {
         dbContactsCollection
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if (!queryDocumentSnapshots.isEmpty()){
+                        if (!queryDocumentSnapshots.isEmpty()) {
                             List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
 
                             contactsOnTuchatFromFireStore.clear();
 
 
-                            for (DocumentSnapshot d : list){
+                            for (DocumentSnapshot d : list) {
                                 ContactsInfoClass p = d.toObject(ContactsInfoClass.class);
 
 
@@ -365,8 +373,7 @@ public class NewConversationActivity extends AppCompatActivity {
                             newConversationRecyclerView.setVisibility(View.VISIBLE);
                             progressBarLayout.setVisibility(View.GONE);
                             placeHolderLayout.setVisibility(View.GONE);
-                        }
-                        else {
+                        } else {
                             newConversationRecyclerView.setVisibility(View.GONE);
                             progressBarLayout.setVisibility(View.GONE);
                             placeHolderLayout.setVisibility(View.VISIBLE);
@@ -375,7 +382,7 @@ public class NewConversationActivity extends AppCompatActivity {
                 });
     }
 
-    public void nextActivityCaller(String phoneNumber){
+    public void nextActivityCaller(String phoneNumber) {
         String generatedString = chatIdGenerator();
 
         Intent startConversation = new Intent(NewConversationActivity.this, ChatsActivity.class);

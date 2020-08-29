@@ -1,28 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ChatsActivity">
+
+    <include layout="@layout/toolbar"
+        android:id="@+id/chats_toolbar"/>
 
     <RelativeLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:orientation="vertical"
         android:layout_height="0dp"
+        android:layout_weight="1"
         android:background="@color/colorPrimary"
-        android:layout_weight="1">
+        android:orientation="vertical">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chats_recycler_view"
             android:layout_width="match_parent"
-            app:stackFromEnd="true"
             android:layout_height="match_parent"
             android:background="@color/colorPrimary"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:stackFromEnd="true" />
 
         <LinearLayout
             android:id="@+id/chats_empty_placeholder"
@@ -52,11 +54,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        android:gravity="center"
         android:orientation="horizontal"
         android:paddingHorizontal="10dp"
 
-        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -72,15 +74,15 @@
             android:inputType="textMultiLine|textCapSentences"
             android:maxHeight="90dp"
             android:minHeight="50dp"
-            android:paddingVertical="5dp"
-            android:paddingHorizontal="30dp" />
+            android:paddingHorizontal="30dp"
+            android:paddingVertical="5dp" />
 
         <Button
-            android:layout_width="40dp"
             android:id="@+id/send_message_button"
-            android:backgroundTint="@color/colorText"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/send_message_button"
-            android:layout_height="40dp"/>
+            android:backgroundTint="@color/colorText" />
 
     </LinearLayout>
 

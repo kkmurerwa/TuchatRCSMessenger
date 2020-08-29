@@ -1,58 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical"
     android:layout_height="match_parent"
-    tools:context=".MainActivity" >
+    android:orientation="vertical"
+    tools:context=".MainActivity">
 
-        <LinearLayout
-            android:id="@+id/new_conversations_progress_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:visibility="visible"
-            android:background="@color/colorPrimary">
-
-            <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:id="@+id/new_conversations_recycler_view"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:paddingBottom="@dimen/message_padding"
-            android:background="@color/colorPrimary" />
+    <include layout="@layout/toolbar"
+        android:id="@+id/new_chat_toolbar"/>
 
     <LinearLayout
+        android:id="@+id/new_conversations_progress_bar"
         android:layout_width="match_parent"
-        android:id="@+id/new_conversations_empty_placeholder"
+        android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
-        android:visibility="gone"
-        android:layout_height="match_parent"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:visibility="visible">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/new_conversations_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/colorPrimary"
+        android:paddingBottom="@dimen/message_padding" />
+
+    <LinearLayout
+        android:id="@+id/new_conversations_empty_placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorText"
-            android:textSize="16sp"
             android:padding="10dp"
-            android:text="You have no contacts yet"/>
+            android:text="You have no contacts yet"
+            android:textColor="@color/colorText"
+            android:textSize="16sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:paddingHorizontal="15dp"
-            android:text="Ask your friends to install Tuchat so that you can talk to them."/>
+            android:text="Ask your friends to install Tuchat so that you can talk to them." />
 
     </LinearLayout>
 
