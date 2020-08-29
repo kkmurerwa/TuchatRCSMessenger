@@ -10,9 +10,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -79,11 +81,24 @@ public class ChatsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chats);
 
+        Toolbar toolbar = findViewById(R.id.chats_toolbar);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
         //Retrieve the passed strings from calling activity
         Intent intent = getIntent();
         phoneNumber = intent.getStringExtra("Phone Number");
 
-        if (phoneNumber==null){
+        if (phoneNumber == null) {
             senderName = intent.getStringExtra("Sender Name");
             setTitle(senderName);
         }
@@ -95,8 +110,6 @@ public class ChatsActivity extends AppCompatActivity {
         firebaseUser = firebaseAuth.getCurrentUser();
         assert firebaseUser != null;
         userID = firebaseUser.getUid();
-
-
 
 
         //Initialize the layout variables
@@ -133,11 +146,11 @@ public class ChatsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 message = typedMessage.getText().toString().trim();
 
-                if (message.length() >1){
+                if (message.length() > 1) {
                     saveMessagesToFirestore();
                     typedMessage.setText("");
 
-                    if (messageCount==0){
+                    if (messageCount == 0) {
                         updateConversations();
                     }
                 }
@@ -152,27 +165,27 @@ public class ChatsActivity extends AppCompatActivity {
 
     }
 
-    private void updatesListener (){
+    private void updatesListener() {
         dbPath.addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                        getMessagesFromFirestore();
-                    }
-                });
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                getMessagesFromFirestore();
+            }
+        });
     }
 
-    private void getMessagesFromFirestore(){
+    private void getMessagesFromFirestore() {
         dbPath.orderBy("sentTime")
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         messageCount = queryDocumentSnapshots.size();
-                        if (!queryDocumentSnapshots.isEmpty()){
+                        if (!queryDocumentSnapshots.isEmpty()) {
                             List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
 
 
-                            if (!messagesList.isEmpty()){
+                            if (!messagesList.isEmpty()) {
                                 messagesList.clear();
                             }
 
@@ -196,8 +209,7 @@ public class ChatsActivity extends AppCompatActivity {
                             recyclerView.setVisibility(View.VISIBLE);
                             emptyPlaceholder.setVisibility(View.GONE);
 
-                        }
-                        else {
+                        } else {
                             recyclerView.setVisibility(View.GONE);
                             emptyPlaceholder.setVisibility(View.VISIBLE);
                         }
@@ -212,7 +224,7 @@ public class ChatsActivity extends AppCompatActivity {
 
     }
 
-    private void saveMessagesToFirestore(){
+    private void saveMessagesToFirestore() {
         date = new Date();
         date.getTime();
 
@@ -244,7 +256,7 @@ public class ChatsActivity extends AppCompatActivity {
                 });
     }
 
-    public void retrieveUserName(){
+    public void retrieveUserName() {
         db.collection(userInfoCollection)
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -254,7 +266,7 @@ public class ChatsActivity extends AppCompatActivity {
                             List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
 
                             for (DocumentSnapshot d : list) {
-                                if (d.getString("User Phone").equals(phoneNumber)){
+                                if (d.getString("User Phone").equals(phoneNumber)) {
                                     senderName = d.getString("User Name");
                                     receiverUserID = d.getId();
                                     //Set the name of the sender as action bar title
@@ -277,7 +289,7 @@ public class ChatsActivity extends AppCompatActivity {
 
     }
 
-    public void checkIfConversationExists(){
+    public void checkIfConversationExists() {
         db.collection(userInfoCollection)
                 .document(userID)
                 .collection(chatRoomCollection)
@@ -289,7 +301,7 @@ public class ChatsActivity extends AppCompatActivity {
                             List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
 
                             for (DocumentSnapshot d : list) {
-                                if (d.getString("").equals(receiverUserID)){
+                                if (d.getString("").equals(receiverUserID)) {
                                     //Do stuff
                                 }
                             }
@@ -298,13 +310,12 @@ public class ChatsActivity extends AppCompatActivity {
                 });
     }
 
-    public void updateConversations(){
+    public void updateConversations() {
         //Get current time and date
         date = new Date();
         date.getTime();
         String rdstatus = "read";
         String chtRmId = chatRoomID;
-
 
 
         MessagesClass messagesClass = new MessagesClass(
@@ -336,7 +347,7 @@ public class ChatsActivity extends AppCompatActivity {
                 .set(messagesClassReceiver);
     }
 
-    public String returnMyName(){
+    public String returnMyName() {
         return myName;
     }
 

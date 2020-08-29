@@ -2,6 +2,7 @@ package com.example.tuchatrcsmessenger;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.example.tuchatrcsmessenger.Adapters.ConversationsAdapter;
 import com.example.tuchatrcsmessenger.Classes.ConversationsClass;
@@ -51,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout emptyPlaceholder;
 
     //Progress bar loader
-    LinearLayout progressBarLoader;
+    ProgressBar progressBarLoader;
 
     private List<ConversationsClass> listItems;
     private CollectionReference dbConversationsCollection;
@@ -61,6 +63,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        Toolbar toolbar = findViewById(R.id.main_toolbar);
+
+        setSupportActionBar(toolbar);
+
 
         //Initialize firebase variables
         firebaseAuth = FirebaseAuth.getInstance();
@@ -106,16 +114,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
     }
 
-    private void updatesListener (){
+    private void updatesListener() {
         dbConversationsCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                        getDataFromFireStore();
-                    }
-                });
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                getDataFromFireStore();
+            }
+        });
     }
 
     public void getDataFromFireStore() {
@@ -125,16 +132,16 @@ public class MainActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if (!queryDocumentSnapshots.isEmpty()){
+                        if (!queryDocumentSnapshots.isEmpty()) {
 
                             List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
 
 
-                            if (!listItems.isEmpty()){
+                            if (!listItems.isEmpty()) {
                                 listItems.clear();
                             }
 
-                            for (DocumentSnapshot d : list){
+                            for (DocumentSnapshot d : list) {
                                 ConversationsClass p = d.toObject(ConversationsClass.class);
 
                                 ConversationsClass listItem = new ConversationsClass(
@@ -153,8 +160,7 @@ public class MainActivity extends AppCompatActivity {
                             conversationsRecyclerView.setVisibility(View.VISIBLE);
                             progressBarLoader.setVisibility(View.GONE);
                             emptyPlaceholder.setVisibility(View.GONE);
-                        }
-                        else {
+                        } else {
                             //Show empty placeholder layout
                             conversationsRecyclerView.setVisibility(View.GONE);
                             emptyPlaceholder.setVisibility(View.VISIBLE);

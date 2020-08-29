@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "432841621688-7ct9ne0grol6ku8o9bteqe4g6j70v795.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tuchatrcsmessenger",
+            "certificate_hash": "69afeecf60d8463d698a9dcba1d75685ecc69d32"
+          }
+        },
+        {
+          "client_id": "432841621688-fk9tslfv10hirdgleomsg0tnq2sbvn6j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tuchatrcsmessenger",
+            "certificate_hash": "a3c336f20905b61b71f24732ffd51433ee255581"
+          }
+        },
+        {
           "client_id": "432841621688-fg12832a16lv83aclm8bqj1nh8poqa15.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
