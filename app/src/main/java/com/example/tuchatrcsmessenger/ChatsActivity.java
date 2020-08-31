@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 
@@ -140,7 +141,7 @@ public class ChatsActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(lm);
 
-        Button sendMessage = findViewById(R.id.send_message_button);
+        ImageButton sendMessage = findViewById(R.id.send_message_button);
         typedMessage = findViewById(R.id.typed_message);
 
         //Set button onClickListener
