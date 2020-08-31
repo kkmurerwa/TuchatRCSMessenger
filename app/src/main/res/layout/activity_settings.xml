@@ -7,6 +7,10 @@
     android:layout_height="match_parent"
     tools:context=".SettingsActivity">
 
+    <include
+        android:id="@+id/main_toolbar"
+        layout="@layout/toolbar" />
+
     <TextView
         android:id="@+id/settings_activity_title"
         android:layout_width="0dp"
