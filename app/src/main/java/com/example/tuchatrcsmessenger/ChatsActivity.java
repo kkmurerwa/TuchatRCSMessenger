@@ -367,7 +367,7 @@ public class ChatsActivity extends AppCompatActivity {
 
             //Show snackbar with message
             View parentLayout = findViewById(android.R.id.content);
-            Snackbar.make(parentLayout, "Deleted Conversation...", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(parentLayout, "This feature has not been implemented yet", Snackbar.LENGTH_LONG).show();
         }
         return true;
     }
