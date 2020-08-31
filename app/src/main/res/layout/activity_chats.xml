@@ -11,7 +11,7 @@
         android:id="@+id/chats_toolbar"
         layout="@layout/toolbar" />
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -27,30 +27,36 @@
             android:visibility="gone"
             app:stackFromEnd="true" />
 
-        <LinearLayout
-            android:id="@+id/chats_empty_placeholder"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="visible">
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/chats_empty_placeholder"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="You have no chats yet"
-                android:textColor="@color/colorText"
-                android:textSize="16sp" />
+                android:background="@color/colorPrimary"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="visible">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Try sending a message." />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="You have no chats yet"
+                    android:textColor="@color/colorText"
+                    android:textSize="16sp" />
 
-        </LinearLayout>
-    </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Try sending a message." />
+
+            </LinearLayout>
+        </ScrollView>
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -58,6 +64,7 @@
         android:gravity="center"
         android:orientation="horizontal"
         android:paddingHorizontal="10dp"
+
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -69,7 +76,6 @@
             android:layout_marginVertical="7dp"
             android:layout_marginEnd="10dp"
             android:layout_weight="1"
-            android:textColor="@color/colorText"
             android:background="@drawable/type_message_edit_text"
             android:hint="Type a message"
             android:textColorHint="@color/colorPrimaryLight"
