@@ -184,9 +184,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.settings) {
             //Code to log out the user
-            firebaseAuth.signOut();
-            welcomeScreen = new Intent(MainActivity.this, WelcomeScreen.class);
-            finish();
             startActivity(new Intent(MainActivity.this, SettingsActivity.class));
         }
         return true;
