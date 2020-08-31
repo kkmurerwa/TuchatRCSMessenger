@@ -13,4 +13,5 @@
     <string name="continue_button">Continuer</string>
     <string name="contacts_request_message">Tuchat a besoin d\'accéder à vos contacts afin de vous montrer les contacts qui sont sur Tuchat. Vos contacts seront en sécurité avec nous.</string>
     <string name="welcome_text">Bienvenue á Tuchat</string>
+    <string name="settings">Reglages</string>
 </resources>
