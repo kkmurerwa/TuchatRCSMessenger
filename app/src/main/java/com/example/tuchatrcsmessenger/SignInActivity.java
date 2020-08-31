@@ -211,7 +211,7 @@ public class SignInActivity extends AppCompatActivity {
         phoneNumberPrompt.setText("Enter verification Code");
 
         //Modify phone number disclaimer
-        phoneNumberDisclaimer.setText("A verification code was sent to you via SMS. Enter the code below.");
+        phoneNumberDisclaimer.setText(R.string.manual_code_entry_disclaimer);
 
         //Hide the country code spinner
         countrySpinner.setVisibility(View.GONE);

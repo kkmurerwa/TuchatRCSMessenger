@@ -182,12 +182,12 @@ public class MainActivity extends AppCompatActivity {
         //Handles clicks on clicked menu items
         int id = item.getItemId();
 
-        if (id == R.id.log_out) {
+        if (id == R.id.settings) {
             //Code to log out the user
             firebaseAuth.signOut();
             welcomeScreen = new Intent(MainActivity.this, WelcomeScreen.class);
             finish();
-            startActivity(welcomeScreen);
+            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
         }
         return true;
     }

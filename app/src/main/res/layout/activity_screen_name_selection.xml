@@ -84,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="10dp"
                 android:textColor="@color/colorAccent"
-                android:text="@string/please_wait_string"/>
+                android:text="Setting user name"/>
 
         </LinearLayout>
 

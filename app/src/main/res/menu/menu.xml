@@ -8,10 +8,10 @@
         android:title="">
         <menu>
             <item
-                android:id="@+id/log_out"
+                android:id="@+id/settings"
                 android:enabled="true"
                 android:icon="@drawable/log_out_icon"
-                android:title="Log out"
+                android:title="Settings"
                 app:showAsAction="never" />
         </menu>
     </item>

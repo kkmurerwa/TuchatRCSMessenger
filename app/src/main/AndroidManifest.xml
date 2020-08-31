@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.tuchatrcsmessenger">
 
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:allowBackup="true"
@@ -11,37 +11,46 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".NewConversationActivity"
+        <activity android:name=".SettingsActivity"></activity>
+        <activity
+            android:name=".NewConversationActivity"
             android:parentActivityName=".MainActivity">
-            <!--Stuff here-->
+
+            <!-- Stuff here -->
         </activity>
         <activity
             android:name=".ChatsActivity"
             android:parentActivityName=".MainActivity">
-            <!--Stuff here-->
+
+            <!-- Stuff here -->
         </activity>
         <activity
             android:name=".ScreenNameSelectionActivity"
             android:parentActivityName=".SignInActivity">
-            <!--Stuff here-->
+
+            <!-- Stuff here -->
         </activity>
         <activity android:name=".SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".SignInActivity"
             android:parentActivityName=".WelcomeScreen">
+
             <!-- Stuff here -->
         </activity>
         <activity android:name=".WelcomeScreen">
+
             <!-- Stuff here -->
         </activity>
-        <activity
-            android:name=".MainActivity">
+        <activity android:name=".MainActivity">
+
             <!-- Stuff here -->
         </activity>
     </application>
+
 </manifest>
