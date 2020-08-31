@@ -8,22 +8,8 @@
     tools:context=".SettingsActivity">
 
     <include
-        android:id="@+id/main_toolbar"
+        android:id="@+id/settings_toolbar"
         layout="@layout/toolbar" />
-
-    <TextView
-        android:id="@+id/settings_activity_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:gravity="center_horizontal"
-        android:text="@string/settings"
-        android:textSize="25sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/sign_out_button"

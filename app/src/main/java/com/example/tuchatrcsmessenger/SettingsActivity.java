@@ -1,6 +1,7 @@
 package com.example.tuchatrcsmessenger;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +22,19 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
+        Toolbar toolbar = findViewById(R.id.settings_toolbar);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         //Initialize firebase auth
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -64,6 +78,15 @@ public class SettingsActivity extends AppCompatActivity {
             default:
                 break;
         }
+    }
+
+    @Override
+    public void finish() {
+        //This method specifies the actions to do if the user presses back button while in this activity
+        super.finish();
+
+        //Animate transition to calling activity
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
 }

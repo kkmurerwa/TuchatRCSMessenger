@@ -79,6 +79,7 @@
             android:background="@drawable/type_message_edit_text"
             android:hint="Type a message"
             android:textColorHint="@color/colorPrimaryLight"
+            android:textColor="@color/colorText"
             android:inputType="textMultiLine|textCapSentences"
             android:maxHeight="90dp"
             android:minHeight="50dp"
