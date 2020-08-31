@@ -51,7 +51,7 @@ public class SettingsActivity extends AppCompatActivity {
 
                         public void onFinish() {
                             //Finish current activity
-                            
+                            SettingsActivity.this.finish();
 
                             //Launch welcome screen activity
                             startActivity(new Intent(SettingsActivity.this, WelcomeScreen.class));
