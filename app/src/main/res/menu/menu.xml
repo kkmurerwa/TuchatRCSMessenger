@@ -10,8 +10,8 @@
             <item
                 android:id="@+id/settings"
                 android:enabled="true"
-                android:icon="@drawable/log_out_icon"
-                android:title="Settings"
+                android:icon="@drawable/ic_action_settings"
+                android:title="@string/settings"
                 app:showAsAction="never" />
         </menu>
     </item>
