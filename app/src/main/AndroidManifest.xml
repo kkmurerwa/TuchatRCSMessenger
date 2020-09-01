@@ -19,6 +19,7 @@
         </activity>
         <activity
             android:name=".NewConversationActivity"
+            android:label="Start Conversation"
             android:parentActivityName=".MainActivity">
 
             <!-- Stuff here -->

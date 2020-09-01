@@ -79,10 +79,8 @@ public class NewConversationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_conversation);
 
-        //Set action bar Title
-
+        //Initialize and display toolbar
         Toolbar toolbar = findViewById(R.id.new_chat_toolbar);
-
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -93,7 +91,6 @@ public class NewConversationActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-        setTitle("Start conversation");
 
         //Initialize firebase variables
         firebaseAuth = FirebaseAuth.getInstance();
@@ -231,7 +228,6 @@ public class NewConversationActivity extends AppCompatActivity {
                 //Error caught with no action
             }
         }
-
     }
 
     public String chatIdGenerator() {

@@ -11,11 +11,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tuchatrcsmessenger.ChatsActivity;
-import com.example.tuchatrcsmessenger.Classes.MessagesClass;
+import com.example.tuchatrcsmessenger.Classes.messagesClass;
 import com.example.tuchatrcsmessenger.R;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -25,7 +24,7 @@ import java.util.List;
 
 @SuppressLint("SimpleDateFormat")
 public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private List<MessagesClass> listItems;
+    private List<messagesClass> listItems;
     private Context context;
     private String myName;
     private SimpleDateFormat formatterMessageTime = new SimpleDateFormat("HH:mm");
@@ -33,9 +32,9 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private SimpleDateFormat formatterHalfDate = new SimpleDateFormat("MMM yyyy");
     private SimpleDateFormat formatterDay = new SimpleDateFormat("dd");
     Date today;
-    MessagesClass previousListItem;
+    messagesClass previousListItem;
 
-    public MessagesAdapter(List<MessagesClass> listItems, Context context) {
+    public MessagesAdapter(List<messagesClass> listItems, Context context) {
         this.listItems = listItems;
         this.context = context;
     }
@@ -59,7 +58,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public int getItemViewType(int position) {
         // return super.getItemViewType(position);
-        MessagesClass messagesClass = listItems.get(position);
+        messagesClass messagesClass = listItems.get(position);
 
         if (messagesClass.userId.equals(FirebaseAuth.getInstance().getUid())) {
             return 1;
@@ -70,7 +69,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        MessagesClass listItem = listItems.get(position);
+        messagesClass listItem = listItems.get(position);
 
 
         if (holder.getItemViewType() == 1) {
@@ -123,7 +122,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         }
 
-        void bind(MessagesClass listItem, int position) {
+        void bind(messagesClass listItem, int position) {
             today = new Date();
             today.getTime();
 
@@ -205,7 +204,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         }
 
-        void bind(MessagesClass listItem, int position) {
+        void bind(messagesClass listItem, int position) {
             today = new Date();
             today.getTime();
 

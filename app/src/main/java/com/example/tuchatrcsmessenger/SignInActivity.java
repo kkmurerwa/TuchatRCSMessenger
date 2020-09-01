@@ -108,6 +108,8 @@ public class SignInActivity extends AppCompatActivity {
                         //Show progress bar
                         ProgressBarController progressBarController = new ProgressBarController();
                         progressBarController.showProgressBar(signInButton, progressBarLayout);
+                        TextView textView = findViewById(R.id.progress_bar_text);
+                        textView.setText("Please wait...");
                     }
                 }
             }
@@ -162,9 +164,6 @@ public class SignInActivity extends AppCompatActivity {
         public void onCodeAutoRetrievalTimeOut(@NonNull String s) {
             //Do something if auto retrieval times out
             super.onCodeAutoRetrievalTimeOut(s);
-
-            Toast.makeText(SignInActivity.this, "Automatic authentication could not be completed." +
-                    "Enter the verification code you received.", Toast.LENGTH_LONG).show();
 
             //Change to verification mode only if the number is valid
             verificationMode = true;

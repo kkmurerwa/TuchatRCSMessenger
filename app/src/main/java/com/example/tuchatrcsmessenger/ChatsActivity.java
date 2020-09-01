@@ -7,7 +7,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -21,7 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tuchatrcsmessenger.Adapters.MessagesAdapter;
-import com.example.tuchatrcsmessenger.Classes.MessagesClass;
+import com.example.tuchatrcsmessenger.Classes.messagesClass;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
@@ -68,7 +67,7 @@ public class ChatsActivity extends AppCompatActivity {
 
 
     //Variable to hold messages
-    List<MessagesClass> messagesList;
+    List<messagesClass> messagesList;
 
     Date date;
 
@@ -131,7 +130,7 @@ public class ChatsActivity extends AppCompatActivity {
         //TODO: Add code to update the user path
 
         //Initialize array
-        messagesList = new ArrayList<MessagesClass>();
+        messagesList = new ArrayList<messagesClass>();
 
         //Set message scroll to always be scrolled at bottom
         LinearLayoutManager lm = new LinearLayoutManager(this);
@@ -155,7 +154,7 @@ public class ChatsActivity extends AppCompatActivity {
                     typedMessage.setText("");
 
                     if (messageCount == 0) {
-                        updateConversations();
+                        createConversation();
                     }
                 }
             }
@@ -198,13 +197,12 @@ public class ChatsActivity extends AppCompatActivity {
                             }
 
                             for (DocumentSnapshot d : list) {
-                                MessagesClass p = d.toObject(MessagesClass.class);
+                                messagesClass p = d.toObject(messagesClass.class);
 
-                                MessagesClass listItem = new MessagesClass(
+                                messagesClass listItem = new messagesClass(
                                         p.getSenderName(),
                                         p.getMessageBody(),
                                         p.getSentTime(),
-                                        p.getReadStatus(),
                                         d.getId(), p.getUserId()
                                 );
                                 messagesList.add(listItem);
@@ -240,12 +238,12 @@ public class ChatsActivity extends AppCompatActivity {
         String rdstatus = "read";
 
 
-        MessagesClass messagesClass = new MessagesClass(
+        messagesClass messagesClass = new messagesClass(
                 senderName,
                 message,
                 date,
-                rdstatus,
-                chtRmId, FirebaseAuth.getInstance().getUid()
+                chtRmId,
+                FirebaseAuth.getInstance().getUid()
         );
 
         dbPath.add(messagesClass)
@@ -317,7 +315,7 @@ public class ChatsActivity extends AppCompatActivity {
                 });
     }
 
-    public void updateConversations() {
+    public void createConversation() {
         //Get current time and date
         date = new Date();
         date.getTime();
@@ -325,19 +323,17 @@ public class ChatsActivity extends AppCompatActivity {
         String chtRmId = chatRoomID;
 
 
-        MessagesClass messagesClass = new MessagesClass(
+        messagesClass messagesClass = new messagesClass(
                 senderName,
                 message,
                 date,
-                rdstatus,
                 chtRmId, FirebaseAuth.getInstance().getUid()
         );
 
-        MessagesClass messagesClassReceiver = new MessagesClass(
+        messagesClass messagesClassReceiver = new messagesClass(
                 myName,
                 message,
                 date,
-                rdstatus,
                 chtRmId, FirebaseAuth.getInstance().getUid()
         );
 
