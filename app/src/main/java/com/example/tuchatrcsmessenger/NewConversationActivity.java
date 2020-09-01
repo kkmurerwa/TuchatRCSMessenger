@@ -3,13 +3,17 @@ package com.example.tuchatrcsmessenger;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.telephony.TelephonyManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -188,7 +192,7 @@ public class NewConversationActivity extends AppCompatActivity {
         String contactId;
         String displayName;
         contactsListItems = new ArrayList<>();
-        Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+        Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, Phone.DISPLAY_NAME + " ASC");
         if (cursor.getCount() > 0) {
             while (cursor.moveToNext()) {
                 int hasPhoneNumber = Integer.parseInt(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)));
@@ -201,20 +205,23 @@ public class NewConversationActivity extends AppCompatActivity {
                     contactsInfoClass.setDisplayName(displayName);
 
                     Cursor phoneCursor = getContentResolver().query(
-                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                            Phone.CONTENT_URI,
                             null,
-                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                            Phone.CONTACT_ID + " = ?",
                             new String[]{contactId},
                             null);
 
-                    if (phoneCursor.moveToNext()) {
-                        String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)).replaceAll("\\s", "");
+                    while (phoneCursor.moveToNext()) {
+                        String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(Phone.NUMBER)).replaceAll("\\s", "");
+
+                        //Replace phone number string if it starts with 0 with +254
+                        if (phoneNumber.charAt(0) == '0') {
+                            phoneNumber = phoneNumber.replaceFirst("0", "+254");
+                        }
 
                         contactsInfoClass.setPhoneNumber(phoneNumber);
                     }
-
                     phoneCursor.close();
-
                     contactsListItems.add(contactsInfoClass);
                 }
             }
@@ -282,13 +289,18 @@ public class NewConversationActivity extends AppCompatActivity {
             View parentLayout = findViewById(android.R.id.content);
             Snackbar.make(parentLayout, "Refreshing contacts...", Snackbar.LENGTH_LONG).show();
 
-            final Handler handler = new Handler();
-            final Runnable r = new Runnable() {
-                public void run() {
-                    handler.postDelayed(this, 10);
+            new CountDownTimer(1000, 1000) {
+
+                public void onTick(long millisUntilFinished) {
+                    //Add code after every second
+                }
+
+                public void onFinish() {
+                    //Finish current activity
+                    Toast.makeText(NewConversationActivity.this, "I have been called", Toast.LENGTH_SHORT).show();
                     getContacts();
                 }
-            };
+            }.start();
 
         }
         return true;
@@ -305,12 +317,6 @@ public class NewConversationActivity extends AppCompatActivity {
 
                             for (ContactsInfoClass contact : contactsListItems) {
                                 String phoneNumber = contact.getPhoneNumber();
-
-                                //Replace phone number string if it starts with 0 with +254
-                                if (phoneNumber.charAt(0) == '0') {
-                                    phoneNumber = phoneNumber.replaceFirst("0", "+254");
-                                }
-
 
                                 for (DocumentSnapshot d : list) {
                                     if (Objects.requireNonNull(d.getString("User Phone")).equals(phoneNumber)) {
