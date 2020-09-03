@@ -4,17 +4,16 @@ package com.example.tuchatrcsmessenger.Classes;
 import java.util.Date;
 
 public class ConversationsClass {
-    public String senderName, messageBody, readStatus, chatRoomId;
+    public String senderName, messageBody, chatRoomId;
     public Date sentTime;
 
 
     public ConversationsClass() {}
 
-    public ConversationsClass(String senderName, String messageBody, Date sentTime, String readStatus, String chatRoomId) {
+    public ConversationsClass(String senderName, String messageBody, Date sentTime, String chatRoomId) {
         this.senderName = senderName;
         this.messageBody = messageBody;
         this.sentTime = sentTime;
-        this.readStatus = readStatus;
         this.chatRoomId = chatRoomId;
     }
 
@@ -40,14 +39,6 @@ public class ConversationsClass {
 
     public void setSentTime(Date sentTime) {
         this.sentTime = sentTime;
-    }
-
-    public String getReadStatus() {
-        return readStatus;
-    }
-
-    public void setReadStatus(String readStatus) {
-        this.readStatus = readStatus;
     }
 
     public String getChatRoomId() {

@@ -4,7 +4,7 @@ package com.example.tuchatrcsmessenger.Classes;
 import java.util.Date;
 
 public class messagesClass {
-    public String senderName, messageBody, readStatus, chatRoomId, userId;
+    public String senderName, messageBody, chatRoomId, userId;
     public Date sentTime;
 
     public messagesClass() {}
@@ -13,7 +13,6 @@ public class messagesClass {
         this.senderName = senderName;
         this.messageBody = messageBody;
         this.sentTime = sentTime;
-        this.readStatus = readStatus;
         this.chatRoomId = chatRoomId;
         this.userId = userId;
     }

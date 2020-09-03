@@ -3,18 +3,23 @@ package com.example.tuchatrcsmessenger;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.collection.ArraySet;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.tuchatrcsmessenger.Adapters.ConversationsAdapter;
+import com.example.tuchatrcsmessenger.Classes.ChatroomClass;
+import com.example.tuchatrcsmessenger.Classes.ContactsInfoClass;
 import com.example.tuchatrcsmessenger.Classes.ConversationsClass;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -28,7 +33,9 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     //Firebase
@@ -57,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
 
     private List<ConversationsClass> listItems;
     private CollectionReference dbConversationsCollection;
+    private List<String> mMyChatrooms; // This string list contains a list of chatrooms that a user appears in
+    private List<String> mMyParticipants;
+    private HashMap<String, String> mUserNamesHashMap; // Declare hashmap to store names of participants in key value pairs, accessible through the chat name
 
 
     @Override
@@ -94,9 +104,15 @@ public class MainActivity extends AppCompatActivity {
         conversationsRecyclerView = findViewById(R.id.conversations_recycler_view);
         conversationsRecyclerView.setHasFixedSize(true);
         conversationsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Declare arrays to be used to hold chat data
         listItems = new ArrayList<>();
+        mMyChatrooms = new ArrayList<>();
+        mMyParticipants = new ArrayList<>();
+        mUserNamesHashMap = new HashMap<>();
 
         getDataFromFireStore();
+        getUserChatrooms();
         updatesListener();
 
         //Set on-click listener for FAB
@@ -127,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void getDataFromFireStore() {
         //Get data from database
-        dbConversationsCollection.orderBy("sentTime")
+        dbConversationsCollection
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -148,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
                                         p.getSenderName(),
                                         p.getMessageBody(),
                                         p.getSentTime(),
-                                        p.getReadStatus(),
                                         d.getId()
                                 );
                                 listItems.add(listItem);
@@ -165,6 +180,52 @@ public class MainActivity extends AppCompatActivity {
                             conversationsRecyclerView.setVisibility(View.GONE);
                             emptyPlaceholder.setVisibility(View.VISIBLE);
                             progressBarLoader.setVisibility(View.GONE);
+                        }
+                    }
+                });
+    }
+
+    public void getUserChatrooms () {
+        db.collection(chatRoomsCollection).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (DocumentSnapshot d : queryDocumentSnapshots) {
+                    String id = d.getId();
+                    List<String> chatroomMembers = (List<String>) d.get("chatMembers");
+
+                    if (Objects.requireNonNull(chatroomMembers).contains(userID)){
+                        mMyChatrooms.add(id);
+
+                        //Get user ids of other participant
+                        for (int i = 0; i < chatroomMembers.size(); i ++){
+                            if (!chatroomMembers.get(i).equals(userID)){
+                                mMyParticipants.add(chatroomMembers.get(i));
+                            }
+                        }
+                    }
+                }
+                retrieveUserNames();
+            }
+        });
+    }
+
+    private void retrieveUserNames() {
+        db.collection(userInfoCollection)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+
+                            for (DocumentSnapshot d : list) {
+                                String id = d.getId();
+                                if (mMyParticipants.contains(id)){
+                                    mUserNamesHashMap.put(id, d.getString("User Name"));
+                                }
+                            }
+
+                            Toast.makeText(MainActivity.this, "Size: " +mUserNamesHashMap.size(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tuchatrcsmessenger.Adapters.MessagesAdapter;
+import com.example.tuchatrcsmessenger.Classes.ChatroomClass;
 import com.example.tuchatrcsmessenger.Classes.messagesClass;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -235,7 +236,6 @@ public class ChatsActivity extends AppCompatActivity {
 
 
         String chtRmId = chatRoomID;
-        String rdstatus = "read";
 
 
         messagesClass messagesClass = new messagesClass(
@@ -336,6 +336,17 @@ public class ChatsActivity extends AppCompatActivity {
                 date,
                 chtRmId, FirebaseAuth.getInstance().getUid()
         );
+
+        List<String> conversationOwners = new ArrayList<>();
+
+        conversationOwners.add(userID);
+        conversationOwners.add(receiverUserID);
+
+        ChatroomClass chatroomMembers = new ChatroomClass(conversationOwners);
+
+        //Save user IDs of conversation owners on the conversation
+        db.collection(chatRoomCollection)
+                .document(chtRmId).set(chatroomMembers);
 
         db.collection(userInfoCollection)
                 .document(userID)

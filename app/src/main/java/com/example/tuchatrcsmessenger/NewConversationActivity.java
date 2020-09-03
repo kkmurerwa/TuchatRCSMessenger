@@ -234,6 +234,8 @@ public class NewConversationActivity extends AppCompatActivity {
             } catch (Exception e) {
                 //Error caught with no action
             }
+        } else {
+            Toast.makeText(this, "Could not retrieve your contacts. Maybe you have none?", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -324,8 +326,6 @@ public class NewConversationActivity extends AppCompatActivity {
                                     }
                                 }
                             }
-
-
                         }
                     }
                 });

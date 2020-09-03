@@ -104,13 +104,9 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
 
         holder.sender.setText(listItem.getSenderName());
 //        holder.messageBody.setText(listItem.getMessageBody());
-        String readStatus = listItem.getReadStatus();
 
         //Show unread messages
-        if (readStatus.equals("read")){
-            //Do some stuff
-            holder.readStatusButton.setBackgroundResource(R.drawable.notification_dot_read);
-        }
+        holder.readStatusButton.setBackgroundResource(R.drawable.notification_dot_read);
     }
 
     @Override
