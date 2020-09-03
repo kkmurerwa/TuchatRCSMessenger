@@ -224,8 +224,6 @@ public class MainActivity extends AppCompatActivity {
                                     mUserNamesHashMap.put(id, d.getString("User Name"));
                                 }
                             }
-
-                            Toast.makeText(MainActivity.this, "Size: " +mUserNamesHashMap.size(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
