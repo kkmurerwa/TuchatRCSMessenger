@@ -56,5 +56,13 @@ dependencies {
 
     //The dependency below helps create circle images
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    //Room dependencies
+    def room_version = "2.2.5"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-rxjava2:$room_version"
+
 }
 apply plugin: 'com.google.gms.google-services'
