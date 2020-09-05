@@ -27,6 +27,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @SuppressLint("SimpleDateFormat")
@@ -88,22 +89,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
 
         getLastMessage(listItem.getChatRoomId(), holder.messageBody, holder.sentTime);
 
-
-//        if (strDate.equals(currentDateString) && strDateYear.equals(currentDateStringYear)){
-//            holder.sentTime.setText("Today");
-//        }
-//        else if (Integer.parseInt(strDateDay) == Integer.parseInt(currentDateStringDay)-1 && strDateYear.equals(currentDateStringYear)){
-//            holder.sentTime.setText("Yesterday");
-//        }
-//        else if (strDateYear.equals(currentDateStringYear)){
-//            holder.sentTime.setText(formatterHalfDate.format(listItem.getSentTime()));
-//        }
-//        else {
-//            holder.sentTime.setText(strDate);
-//        }
-
         holder.sender.setText(listItem.getSenderName());
-//        holder.messageBody.setText(listItem.getMessageBody());
 
         //Show unread messages
         holder.readStatusButton.setBackgroundResource(R.drawable.notification_dot_read);
@@ -185,7 +171,6 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
                             }
 
                             lastMessage.setText(thisItem.getMessageBody());
-//                            sentTime.setText( formatterFullDate.format(thisItem.getSentTime()));
                         }
                         else {
                             //

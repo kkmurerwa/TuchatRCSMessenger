@@ -3,23 +3,18 @@ package com.example.tuchatrcsmessenger;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.collection.ArraySet;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.example.tuchatrcsmessenger.Adapters.ConversationsAdapter;
-import com.example.tuchatrcsmessenger.Classes.ChatroomClass;
-import com.example.tuchatrcsmessenger.Classes.ContactsInfoClass;
 import com.example.tuchatrcsmessenger.Classes.ConversationsClass;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -64,9 +59,6 @@ public class MainActivity extends AppCompatActivity {
 
     private List<ConversationsClass> listItems;
     private CollectionReference dbConversationsCollection;
-    private List<String> mMyChatrooms; // This string list contains a list of chatrooms that a user appears in
-    private List<String> mMyParticipants;
-    private HashMap<String, String> mUserNamesHashMap; // Declare hashmap to store names of participants in key value pairs, accessible through the chat name
 
 
     @Override
@@ -107,13 +99,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Declare arrays to be used to hold chat data
         listItems = new ArrayList<>();
-        mMyChatrooms = new ArrayList<>();
-        mMyParticipants = new ArrayList<>();
-        mUserNamesHashMap = new HashMap<>();
 
         getDataFromFireStore();
-        getUserChatrooms();
-        updatesListener();
+        conversationUpdatesListener();
 
         //Set on-click listener for FAB
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -132,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void updatesListener() {
+    private void conversationUpdatesListener() {
         dbConversationsCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
@@ -180,50 +168,6 @@ public class MainActivity extends AppCompatActivity {
                             conversationsRecyclerView.setVisibility(View.GONE);
                             emptyPlaceholder.setVisibility(View.VISIBLE);
                             progressBarLoader.setVisibility(View.GONE);
-                        }
-                    }
-                });
-    }
-
-    public void getUserChatrooms () {
-        db.collection(chatRoomsCollection).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                for (DocumentSnapshot d : queryDocumentSnapshots) {
-                    String id = d.getId();
-                    List<String> chatroomMembers = (List<String>) d.get("chatMembers");
-
-                    if (Objects.requireNonNull(chatroomMembers).contains(userID)){
-                        mMyChatrooms.add(id);
-
-                        //Get user ids of other participant
-                        for (int i = 0; i < chatroomMembers.size(); i ++){
-                            if (!chatroomMembers.get(i).equals(userID)){
-                                mMyParticipants.add(chatroomMembers.get(i));
-                            }
-                        }
-                    }
-                }
-                retrieveUserNames();
-            }
-        });
-    }
-
-    private void retrieveUserNames() {
-        db.collection(userInfoCollection)
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if (!queryDocumentSnapshots.isEmpty()) {
-                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-
-                            for (DocumentSnapshot d : list) {
-                                String id = d.getId();
-                                if (mMyParticipants.contains(id)){
-                                    mUserNamesHashMap.put(id, d.getString("User Name"));
-                                }
-                            }
                         }
                     }
                 });
