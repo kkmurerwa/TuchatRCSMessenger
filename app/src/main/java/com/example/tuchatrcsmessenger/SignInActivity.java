@@ -14,16 +14,23 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tuchatrcsmessenger.Classes.SaveTokenObject;
 import com.example.tuchatrcsmessenger.Controllers.ProgressBarController;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.hbb20.CountryCodePicker;
 
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 public class SignInActivity extends AppCompatActivity {
@@ -83,7 +90,7 @@ public class SignInActivity extends AppCompatActivity {
                 String userVerificationCode;
 
                 //Check if the user is verifying the code received or asking for one
-                if (!verificationMode){
+                if (!verificationMode) {
                     //Get full phone number from the phone code library
                     fullPhoneNumber = countrySpinner.getFullNumberWithPlus();
 
@@ -94,15 +101,13 @@ public class SignInActivity extends AppCompatActivity {
                         //Show progress bar
                         ProgressBarController progressBarController = new ProgressBarController();
                         progressBarController.showProgressBar(signInButton, progressBarLayout);
-                    }
-                    else{
+                    } else {
                         Toast.makeText(SignInActivity.this, "Please enter a valid phone number", Toast.LENGTH_SHORT).show();
                     }
-                }
-                else {
+                } else {
                     //Get the user-inputted verification code
                     userVerificationCode = phoneNumber.getText().toString().trim();
-                    if (!userVerificationCode.equals("")){
+                    if (!userVerificationCode.equals("")) {
                         verifyCode(userVerificationCode);
 
                         //Show progress bar
@@ -126,7 +131,7 @@ public class SignInActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
-    public void signInMethod(String phoneNumber){
+    public void signInMethod(String phoneNumber) {
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phoneNumber,        // Phone number to verify
                 30,                 // Timeout duration
@@ -140,7 +145,7 @@ public class SignInActivity extends AppCompatActivity {
         public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
             //Detect the code automatically
             String code = phoneAuthCredential.getSmsCode();
-            if (code != null){
+            if (code != null) {
                 //Call verify code method if code is automatically retrieved
                 verifyCode(code);
             }
@@ -172,7 +177,7 @@ public class SignInActivity extends AppCompatActivity {
     };
 
 
-    private void verifyCode(String code){
+    private void verifyCode(String code) {
         //This verifies the code either entered by the user or auto-retrieved
         PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.getCredential(verificationID, code);
         signInWithCredential(phoneAuthCredential);
@@ -183,20 +188,13 @@ public class SignInActivity extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()){
-                            //Hide progress bar
-                            ProgressBarController progressBarController = new ProgressBarController();
-                            progressBarController.hideProgressbar(signInButton, progressBarLayout);
+                        if (task.isSuccessful()) {
 
-                            //Call next activity
-                            Intent screenNameSelection = new Intent(SignInActivity.this, ScreenNameSelectionActivity.class);
-                            screenNameSelection.putExtra("Phone Number", fullPhoneNumber);
-                            startActivity(screenNameSelection);
 
-                            //Animate transition into called activity
-                            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                        }
-                        else {
+                            //Save Token to Firestore
+                            saveToken();
+
+                        } else {
                             //Hide progress bar
                             ProgressBarController controller = new ProgressBarController();
                             controller.hideProgressbar(signInButton, progressBarLayout);
@@ -205,7 +203,68 @@ public class SignInActivity extends AppCompatActivity {
                 });
     }
 
-    private void changeToVerificationMode(){
+    private void saveToken() {
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+                    @Override
+                    public void onSuccess(InstanceIdResult instanceIdResult) {
+                        String deviceToken = instanceIdResult.getToken();
+
+                        sendRegistrationToServer(deviceToken);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("Token", "NewTokenFailed " + e.getLocalizedMessage());
+            }
+        });
+    }
+
+    private void sendRegistrationToServer(String deviceToken) {
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            Log.d(
+                    "MessagingService",
+                    "sendRegistrationToServer: sending token to server:  " + deviceToken
+            );
+
+            SaveTokenObject saveTokenObject = new SaveTokenObject(deviceToken);
+
+            FirebaseFirestore.getInstance().collection("tokens").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).set(saveTokenObject)
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            //Hide progress bar
+                            ProgressBarController progressBarController = new ProgressBarController();
+                            progressBarController.hideProgressbar(signInButton, progressBarLayout);
+                            Log.d("Token", "NewTokenFailedSend " + e.getLocalizedMessage());
+
+                        }
+                    }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    //Hide progress bar
+                    ProgressBarController progressBarController = new ProgressBarController();
+                    progressBarController.hideProgressbar(signInButton, progressBarLayout);
+                    //Call next activity
+                    Intent screenNameSelection = new Intent(SignInActivity.this, ScreenNameSelectionActivity.class);
+                    screenNameSelection.putExtra("Phone Number", fullPhoneNumber);
+                    startActivity(screenNameSelection);
+
+                    //Animate transition into called activity
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                }
+            });
+
+        } else {
+            //Hide progress bar
+            ProgressBarController progressBarController = new ProgressBarController();
+            progressBarController.hideProgressbar(signInButton, progressBarLayout);
+            Log.d("Token", "NewTokenFailedSend User Null");
+        }
+    }
+
+    private void changeToVerificationMode() {
         //Modify phone number prompt
         phoneNumberPrompt.setText("Enter verification Code");
 
