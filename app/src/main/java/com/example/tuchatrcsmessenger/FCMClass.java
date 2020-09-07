@@ -1,8 +1,18 @@
 package com.example.tuchatrcsmessenger;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.media.RingtoneManager;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
 
 import com.example.tuchatrcsmessenger.Classes.SaveTokenObject;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -16,8 +26,10 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Random;
 
 public class FCMClass extends FirebaseMessagingService {
 
@@ -37,8 +49,121 @@ public class FCMClass extends FirebaseMessagingService {
             String message = remoteMessage.getData().get("message");
 
             String sender = remoteMessage.getData().get("sender_name ");
+
+            String sender_id = remoteMessage.getData().get("sender_id");
+
+            String chatRoomId = remoteMessage.getData().get("chatRoom_id");
+
+            if (sender_id != null && FirebaseAuth.getInstance().getCurrentUser() != null && !sender_id.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                buildNotification(title, message, sender, sender_id, chatRoomId);
+            }
         }
         Log.d("MessagingService", "Received message " + remoteMessage.getData().toString());
+    }
+
+    private void buildNotification(String title, String message, String sender, String sender_id, String chatRoomId) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager notificationManager =
+                    (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+            int notificationId = 1;
+            String channelId = "channel-01";
+            String channelName = "Chat Channel";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+
+            NotificationChannel mChannel = new NotificationChannel(
+                    channelId, channelName, importance
+            );
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(mChannel);
+            }
+
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, channelId)
+                    .setContentTitle(title)
+                    .setContentText(message)
+                    .setSubText(message)
+                    .setColor(Color.parseColor("#66a3ff"))
+                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                    .setStyle(
+                            new NotificationCompat.BigTextStyle()
+                                    .bigText(message).setSummaryText(
+                                    message
+                            )
+                    )
+                    .setSmallIcon(R.drawable.user_icon)
+                    .setLargeIcon(
+                            BitmapFactory.decodeResource(
+                                    getApplicationContext().getResources(),
+                                    R.drawable.user_icon
+                            )
+                    )
+                    .setOnlyAlertOnce(true)
+                    .setAutoCancel(true);
+            Intent intent = new Intent(this, ChatsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+            intent.putExtra("Sender Name", sender);
+            intent.putExtra("id", sender_id);
+            intent.putExtra("Chat ID", chatRoomId);
+
+            PendingIntent notifyPendingIntent = PendingIntent.getActivity(
+                    this,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT
+            );
+
+            mBuilder.setContentIntent(notifyPendingIntent);
+            assert notificationManager != null;
+            notificationManager.notify(notificationId, mBuilder.build());
+
+        } else {
+            int notificationId = buildNotificationId(chatRoomId);
+            // Instantiate a Builder object.
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(
+                    this, "default_notification_channel_name"
+            );
+            Intent intent = new Intent(this, ChatsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+            intent.putExtra("Sender Name", sender);
+            intent.putExtra("id", sender_id);
+            intent.putExtra("Chat ID", chatRoomId);
+
+            PendingIntent notifyPendingIntent = PendingIntent.getActivity(
+                    this,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT
+            );
+            //add properties to the builder
+            builder.setSmallIcon(R.drawable.user_icon)
+                    .setLargeIcon(
+                            BitmapFactory.decodeResource(
+                                    getApplicationContext().getResources(),
+                                    R.drawable.user_icon
+                            )
+                    )
+                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                    .setContentTitle(title)
+                    .setContentText(message)
+                    .setSubText(message)
+                    .setColor(Color.parseColor("#66a3ff"))
+                    .setAutoCancel(true)
+                    .setStyle(
+                            new NotificationCompat.BigTextStyle()
+                                    .bigText(message).setSummaryText(
+                                    message
+                            )
+                    )
+                    .setOnlyAlertOnce(true);
+            builder.setContentIntent(notifyPendingIntent);
+            NotificationManager mNotificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.notify(notificationId, builder.build());
+        }
+
+
     }
 
     @Override
@@ -63,6 +188,7 @@ public class FCMClass extends FirebaseMessagingService {
             }
         });
     }
+
 
     private void sendRegistrationToServer(String deviceToken) {
 
@@ -89,5 +215,16 @@ public class FCMClass extends FirebaseMessagingService {
         } else {
             Log.d("Token", "NewTokenFailedSend User Null");
         }
+
+    }
+
+    private Integer buildNotificationId(String id) {
+
+        int notificationId = 0;
+
+        for (int i = 0; i <= 8; i++) {
+            notificationId += (id.charAt(0));
+        }
+        return notificationId;
     }
 }
