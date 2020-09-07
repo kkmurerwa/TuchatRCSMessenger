@@ -100,11 +100,19 @@ public class ChatsActivity extends AppCompatActivity {
 
         //Retrieve the passed strings from calling activity
         Intent intent = getIntent();
-        phoneNumber = intent.getStringExtra("Phone Number");
 
-        if (phoneNumber == null) {
+        if (intent.hasExtra("Phone Number")) {
+            phoneNumber = intent.getStringExtra("Phone Number");
+            retrieveSenderUserName();
+        }
+
+
+        if (intent.hasExtra("Sender Name")) {
             senderName = intent.getStringExtra("Sender Name");
             setTitle(senderName);
+        }
+        if(intent.hasExtra("id")){
+            receiverUserID = intent.getStringExtra("id");
         }
 
         chatRoomID = intent.getStringExtra("Chat ID");
@@ -162,7 +170,7 @@ public class ChatsActivity extends AppCompatActivity {
         });
 
 
-        retrieveUserName();
+        retrieveMyUserName();
         getMessagesFromFirestore();
         updatesListener();
 
@@ -239,7 +247,7 @@ public class ChatsActivity extends AppCompatActivity {
 
 
         messagesClass messagesClass = new messagesClass(
-                senderName,
+                myName,
                 message,
                 date,
                 chtRmId,
@@ -261,7 +269,7 @@ public class ChatsActivity extends AppCompatActivity {
                 });
     }
 
-    public void retrieveUserName() {
+    public void retrieveSenderUserName() {
         db.collection(userInfoCollection)
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -282,16 +290,19 @@ public class ChatsActivity extends AppCompatActivity {
                     }
                 });
 
+
+    }
+
+    public void retrieveMyUserName() {
         db.collection(userInfoCollection)
                 .document(userID)
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        myName = documentSnapshot.getString("User Name");
+                        myName = documentSnapshot.getString("user_name");
                     }
                 });
-
     }
 
     public void checkIfConversationExists() {
