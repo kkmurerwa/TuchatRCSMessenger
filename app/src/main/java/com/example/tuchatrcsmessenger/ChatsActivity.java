@@ -98,6 +98,7 @@ public class ChatsActivity extends AppCompatActivity {
             }
         });
 
+        db = FirebaseFirestore.getInstance();
         //Retrieve the passed strings from calling activity
         Intent intent = getIntent();
 
@@ -129,7 +130,7 @@ public class ChatsActivity extends AppCompatActivity {
         emptyPlaceholder = findViewById(R.id.chats_empty_placeholder);
 
         //Initialize Firestore variable
-        db = FirebaseFirestore.getInstance();
+
 
         //FireStore file structure
         dbPath = db.collection(chatRoomCollection)
@@ -281,7 +282,7 @@ public class ChatsActivity extends AppCompatActivity {
                             for (DocumentSnapshot d : list) {
                                 if (d.getString("user_phone").equals(phoneNumber)) {
                                     senderName = d.getString("user_name");
-                                    receiverUserID = d.getId();
+                                    receiverUserID = d.getString("user_id");
                                     //Set the name of the sender as action bar title
                                     setTitle(senderName);
                                 }
