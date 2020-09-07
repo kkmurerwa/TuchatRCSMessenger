@@ -271,8 +271,8 @@ public class ChatsActivity extends AppCompatActivity {
                             List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
 
                             for (DocumentSnapshot d : list) {
-                                if (d.getString("User Phone").equals(phoneNumber)) {
-                                    senderName = d.getString("User Name");
+                                if (d.getString("user_phone").equals(phoneNumber)) {
+                                    senderName = d.getString("user_name");
                                     receiverUserID = d.getId();
                                     //Set the name of the sender as action bar title
                                     setTitle(senderName);
