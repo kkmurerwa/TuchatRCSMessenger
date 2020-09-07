@@ -338,7 +338,6 @@ public class NewConversationActivity extends AppCompatActivity {
             }
         });
     }
-
     private void saveContactsToFirestore(ContactsInfoClass contactObject) {
         dbContactsCollection.document(contactObject.getPhoneNumber())
                 .set(contactObject)
