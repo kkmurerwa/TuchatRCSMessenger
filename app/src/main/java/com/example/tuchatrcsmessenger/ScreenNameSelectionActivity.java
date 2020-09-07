@@ -100,8 +100,9 @@ public class ScreenNameSelectionActivity extends AppCompatActivity {
 
         // Create a new user Array and append the display name to it
         Map<String, Object> userArray = new HashMap<>();
-        userArray.put("User Name", displayName);
-        userArray.put("User Phone", userPhoneNumber);
+        userArray.put("user_name", displayName);
+        userArray.put("user_phone", userPhoneNumber);
+        userArray.put("user_id", userID);
 
         //Create user collection if it does not exist and save information
         db.collection(userCollection).document(userID)
