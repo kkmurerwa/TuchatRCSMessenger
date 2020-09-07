@@ -292,7 +292,6 @@ public class NewConversationActivity extends AppCompatActivity {
             Snackbar.make(parentLayout, "Refreshing contacts...", Snackbar.LENGTH_LONG).show();
 
             new CountDownTimer(1000, 1000) {
-
                 public void onTick(long millisUntilFinished) {
                     //Add code after every second
                 }
@@ -321,7 +320,7 @@ public class NewConversationActivity extends AppCompatActivity {
                                 String phoneNumber = contact.getPhoneNumber();
 
                                 for (DocumentSnapshot d : list) {
-                                    if (Objects.requireNonNull(d.getString("User Phone")).equals(phoneNumber)) {
+                                    if (Objects.requireNonNull(d.getString("user_phone")).equals(phoneNumber)) {
                                         saveContactsToFirestore(contact);
                                     }
                                 }
