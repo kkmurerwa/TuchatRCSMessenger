@@ -33,7 +33,6 @@ import java.util.Random;
 
 public class FCMClass extends FirebaseMessagingService {
 
-
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
