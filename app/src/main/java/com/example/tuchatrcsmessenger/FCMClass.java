@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.os.Build;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -47,20 +48,34 @@ public class FCMClass extends FirebaseMessagingService {
 
             String message = remoteMessage.getData().get("message");
 
-            String sender = remoteMessage.getData().get("sender_name ");
+            String sender = remoteMessage.getData().get("sender_name");
 
             String sender_id = remoteMessage.getData().get("sender_id");
 
             String chatRoomId = remoteMessage.getData().get("chatRoom_id");
 
-            if (sender_id != null && FirebaseAuth.getInstance().getCurrentUser() != null && !sender_id.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                buildNotification(title, message, sender, sender_id, chatRoomId);
-            }
+            buildNotification(title, message, sender, sender_id, chatRoomId);
+
         }
         Log.d("MessagingService", "Received message " + remoteMessage.getData().toString());
+
     }
 
     private void buildNotification(String title, String message, String sender, String sender_id, String chatRoomId) {
+
+        Intent intent = new Intent(this, ChatsActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        intent.putExtra("Sender Name", sender);
+        intent.putExtra("id", sender_id);
+        intent.putExtra("Chat ID", chatRoomId);
+
+        PendingIntent notifyPendingIntent = PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT
+        );
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager =
@@ -78,16 +93,14 @@ public class FCMClass extends FirebaseMessagingService {
             }
 
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, channelId)
-                    .setContentTitle(title)
-                    .setContentText(message)
+                    .setContentTitle(sender)
+                    //  .setContentText(message)
                     .setSubText(message)
                     .setColor(Color.parseColor("#66a3ff"))
                     .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                     .setStyle(
                             new NotificationCompat.BigTextStyle()
-                                    .bigText(message).setSummaryText(
-                                    message
-                            )
+                                    .bigText(message)
                     )
                     .setSmallIcon(R.drawable.user_icon)
                     .setLargeIcon(
@@ -98,19 +111,6 @@ public class FCMClass extends FirebaseMessagingService {
                     )
                     .setOnlyAlertOnce(true)
                     .setAutoCancel(true);
-            Intent intent = new Intent(this, ChatsActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-            intent.putExtra("Sender Name", sender);
-            intent.putExtra("id", sender_id);
-            intent.putExtra("Chat ID", chatRoomId);
-
-            PendingIntent notifyPendingIntent = PendingIntent.getActivity(
-                    this,
-                    0,
-                    intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT
-            );
 
             mBuilder.setContentIntent(notifyPendingIntent);
             assert notificationManager != null;
@@ -122,19 +122,7 @@ public class FCMClass extends FirebaseMessagingService {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(
                     this, "default_notification_channel_name"
             );
-            Intent intent = new Intent(this, ChatsActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-            intent.putExtra("Sender Name", sender);
-            intent.putExtra("id", sender_id);
-            intent.putExtra("Chat ID", chatRoomId);
-
-            PendingIntent notifyPendingIntent = PendingIntent.getActivity(
-                    this,
-                    0,
-                    intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT
-            );
             //add properties to the builder
             builder.setSmallIcon(R.drawable.user_icon)
                     .setLargeIcon(
@@ -144,16 +132,14 @@ public class FCMClass extends FirebaseMessagingService {
                             )
                     )
                     .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                    .setContentTitle(title)
-                    .setContentText(message)
+                    .setContentTitle(sender)
+                    // .setContentText(message)
                     .setSubText(message)
                     .setColor(Color.parseColor("#66a3ff"))
                     .setAutoCancel(true)
                     .setStyle(
                             new NotificationCompat.BigTextStyle()
-                                    .bigText(message).setSummaryText(
-                                    message
-                            )
+                                    .bigText(message)
                     )
                     .setOnlyAlertOnce(true);
             builder.setContentIntent(notifyPendingIntent);

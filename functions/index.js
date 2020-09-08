@@ -46,6 +46,8 @@ exports.sendNotification = functions.firestore.document('chatrooms/{chatRoomId}/
 
                     let i;
                     for (i = 0; i < usersArray.length; i++) {
+
+                    if(usersArray[i] != messageUserId){
                         let userIdRef = admin.firestore().collection("tokens").doc(usersArray[i]);
                         return t.get(userIdRef).then(doc => {
                             if (doc.exists) {
@@ -55,12 +57,13 @@ exports.sendNotification = functions.firestore.document('chatrooms/{chatRoomId}/
                             }
                         })
                     }
+                    }
                 });
         }).then(() => {
             //If we are at this stage the transaction should have run successfully
 
             //Check if length of tokens evaluates to a truthy value (Is not empty)
-            if (tokens.length) {
+            if (tokens.length ) {
                 functions.logger.log("Construction the notification message.");
                 const payload = {
 
