@@ -323,25 +323,26 @@ public class NewConversationActivity extends AppCompatActivity {
     }
 
     private void checkContactsAgainstFirestoreUsers() {
-        for (int i = 0; i < contactsListItems.size(); i++) {
-            final int finalI = i;
-            db.collection(userInfoCollection)
-                    .get()
-                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                            Log.d("SearchContacts", queryDocumentSnapshots.toString());
-                            if (!queryDocumentSnapshots.isEmpty()) {
-                                List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+
+
+        db.collection(userInfoCollection)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        Log.d("SearchContacts", queryDocumentSnapshots.toString());
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                            for (int i = 0; i < contactsListItems.size(); i++) {
                                 for (DocumentSnapshot d : list) {
-                                    if (Objects.requireNonNull(d.getString("user_phone")).equals(contactsListItems.get(finalI).getPhoneNumber())) {
-                                        savetoDB(contactsListItems.get(finalI));
+                                    if (Objects.requireNonNull(d.getString("user_phone")).equals(contactsListItems.get(i).getPhoneNumber())) {
+                                        savetoDB(contactsListItems.get(i));
                                     }
                                 }
                             }
                         }
-                    });
-        }
+                    }
+                });
     }
 
     private void getSavedContacts() {

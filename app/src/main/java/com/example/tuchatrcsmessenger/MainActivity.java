@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
     //RecyclerView
     private RecyclerView conversationsRecyclerView;
-    private RecyclerView.Adapter adapter;
+    private ConversationsAdapter adapter;
 
     //Placeholder Layout
     LinearLayout emptyPlaceholder;

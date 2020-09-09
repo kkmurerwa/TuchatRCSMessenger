@@ -59,8 +59,6 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
     String strDateYear;
 
 
-
-
     public ConversationsAdapter(List<ConversationsClass> listItems, Context context) {
         this.listItems = listItems;
         this.context = context;
@@ -85,7 +83,6 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
         ConversationsClass listItem = listItems.get(position);
 
 
-
         strDateDay = formatterDay.format(listItem.getSentTime());
         strDateYear = formatterYear.format(listItem.getSentTime());
 
@@ -103,8 +100,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
     }
 
 
-
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView sender;
         public TextView sentTime;
@@ -121,7 +117,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
             sender = itemView.findViewById(R.id.sender_name);
             sentTime = itemView.findViewById(R.id.sent_time);
             messageBody = itemView.findViewById(R.id.message_body);
-            readStatusButton= itemView.findViewById(R.id.button);
+            readStatusButton = itemView.findViewById(R.id.button);
         }
 
         @Override
@@ -140,7 +136,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
     }
 
     //Get last message
-    private void getLastMessage(final String chatRoomID, final TextView lastMessage, final TextView sentTime){
+    private void getLastMessage(final String chatRoomID, final TextView lastMessage, final TextView sentTime) {
 
         db.collection(chatRoomsCollection)
                 .document(chatRoomID)
@@ -160,32 +156,28 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
                             ConversationsClass thisConversation = list.get(index).toObject(ConversationsClass.class);
                             strDate = formatterFullDate.format(thisConversation.getSentTime());
 
-                            if (strDate.equals(currentDateString) && strDateYear.equals(currentDateStringYear)){
+                            if (strDate.equals(currentDateString) && strDateYear.equals(currentDateStringYear)) {
                                 sentTime.setText(formatterTime.format(thisConversation.getSentTime()));
-                            }
-                            else if (Integer.parseInt(strDateDay) == Integer.parseInt(currentDateStringDay)-1 && strDateYear.equals(currentDateStringYear)){
+                            } else if (Integer.parseInt(strDateDay) == Integer.parseInt(currentDateStringDay) - 1 && strDateYear.equals(currentDateStringYear)) {
                                 sentTime.setText("Yesterday");
-                            }
-                            else if (strDateYear.equals(currentDateStringYear)){
+                            } else if (strDateYear.equals(currentDateStringYear)) {
                                 sentTime.setText(formatterHalfDate.format(thisConversation.getSentTime()));
-                            }
-                            else {
+                            } else {
                                 sentTime.setText(strDate);
                             }
                             // Remove all tab spaces and enters and replace them with spaces
                             String messageBody = thisConversation.getMessageBody().replaceAll("\\s", " ");
 
-                            // Trim the string to the first 30 characters. Add ellipses if message length exceeds 30 chars
+                            // Trim the string to the first 30 characters. Add  ellipses if message length exceeds 30 chars
                             String trimmedString;
                             int preferredMessageLength = 30;
-                            if (Math.min(messageBody.length(), preferredMessageLength) == messageBody.length()){
+                            if (Math.min(messageBody.length(), preferredMessageLength) == messageBody.length()) {
                                 trimmedString = messageBody;
                             } else {
                                 trimmedString = messageBody.substring(0, preferredMessageLength) + "...";
                             }
                             lastMessage.setText(trimmedString);
-                        }
-                        else {
+                        } else {
                             //
                         }
                     }
