@@ -247,13 +247,16 @@ public class ChatsActivity extends AppCompatActivity {
         String chtRmId = chatRoomID;
 
 
-        messagesClass messagesClass = new messagesClass(
+        final messagesClass messagesClass = new messagesClass(
                 myName,
                 message,
                 date,
                 chtRmId,
                 FirebaseAuth.getInstance().getUid()
         );
+
+        messagesList.add(messagesClass);
+        adapter.notifyDataSetChanged();
 
         dbPath.add(messagesClass)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
