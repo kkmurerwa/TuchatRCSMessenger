@@ -333,16 +333,28 @@ public class NewConversationActivity extends AppCompatActivity {
                         Log.d("SearchContacts", queryDocumentSnapshots.toString());
                         if (!queryDocumentSnapshots.isEmpty()) {
                             List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                            for (int i = 0; i < contactsListItems.size(); i++) {
-                                for (DocumentSnapshot d : list) {
-                                    if (Objects.requireNonNull(d.getString("user_phone")).equals(contactsListItems.get(i).getPhoneNumber())) {
-                                        savetoDB(contactsListItems.get(i));
+
+                            if (!list.isEmpty()) {
+                                for (int i = 0; i < contactsListItems.size(); i++) {
+                                    for (DocumentSnapshot d : list) {
+                                        if (Objects.requireNonNull(d.getString("user_phone")).equals(contactsListItems.get(i).getPhoneNumber())) {
+                                            savetoDB(contactsListItems.get(i));
+                                        }
                                     }
                                 }
+                            } else {
+                                setListEmpty();
                             }
+                        } else {
+                            setListEmpty();
                         }
                     }
                 });
+    }
+
+    private void setListEmpty() {
+        progressBarLayout.setVisibility(View.GONE);
+        placeHolderLayout.setVisibility(View.VISIBLE);
     }
 
     private void getSavedContacts() {
