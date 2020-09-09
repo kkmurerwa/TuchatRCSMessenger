@@ -3,6 +3,7 @@ package com.example.tuchatrcsmessenger.Adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.telephony.SmsMessage;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,14 +20,16 @@ import com.example.tuchatrcsmessenger.R;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @SuppressLint("SimpleDateFormat")
 public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private List<messagesClass> listItems;
+
     private Context context;
     private String myName;
+    private List<messagesClass> listItems;
     private SimpleDateFormat formatterMessageTime = new SimpleDateFormat("HH:mm");
     private SimpleDateFormat formatterDate = new SimpleDateFormat("dd MMM yyyy");
     private SimpleDateFormat formatterHalfDate = new SimpleDateFormat("MMM yyyy");
@@ -34,16 +37,21 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     Date today;
     messagesClass previousListItem;
 
-    public MessagesAdapter(List<messagesClass> listItems, Context context) {
-        this.listItems = listItems;
+    public MessagesAdapter(Context context) {
         this.context = context;
+        listItems = new ArrayList<>();
+
+    }
+
+    public void setList(List<messagesClass> newList) {
+        listItems.clear();
+        listItems.addAll(newList);
     }
 
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
 
         if (viewType == 1) {
             View v = LayoutInflater.from(parent.getContext())
