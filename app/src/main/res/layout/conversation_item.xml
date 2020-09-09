@@ -45,7 +45,7 @@
                 android:layout_marginRight="28dp"
                 android:textAllCaps="false"
                 android:textColor="@color/colorText"
-                android:textSize="15sp"
+                android:textSize="13sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -68,6 +68,7 @@
                 android:layout_marginStart="8dp"
                 android:enabled="false"
                 android:background="@drawable/notification_dot"
+                android:visibility="gone"
                 android:text=""
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

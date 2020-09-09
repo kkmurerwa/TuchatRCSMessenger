@@ -1,5 +1,6 @@
 package com.example.tuchatrcsmessenger;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -91,14 +92,14 @@ public class FCMClass extends FirebaseMessagingService {
             }
 
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, channelId)
+                    .setDefaults(Notification.DEFAULT_ALL)
                     .setContentTitle(sender)
-                    //  .setContentText(message)
-                    .setSubText(message)
-                    .setColor(Color.parseColor("#66a3ff"))
-                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                     .setStyle(
-                            new NotificationCompat.BigTextStyle()
+                            new NotificationCompat
+                                    .BigTextStyle()
                                     .bigText(message)
+                                    .setBigContentTitle(sender)
+                                    .setSummaryText("New message")
                     )
                     .setSmallIcon(R.drawable.user_icon)
                     .setLargeIcon(

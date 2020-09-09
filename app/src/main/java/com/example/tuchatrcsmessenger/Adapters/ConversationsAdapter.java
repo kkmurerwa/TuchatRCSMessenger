@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
@@ -39,6 +40,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
     private SimpleDateFormat formatterHalfDate = new SimpleDateFormat("d MMM");
     private SimpleDateFormat formatterDay = new SimpleDateFormat("d");
     private SimpleDateFormat formatterYear = new SimpleDateFormat("yyyy");
+    private SimpleDateFormat formatterTime = new SimpleDateFormat("HH:mm");
     private String currentDateString;
     private String currentDateStringDay;
     private String currentDateStringYear;
@@ -83,7 +85,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
         ConversationsClass listItem = listItems.get(position);
 
 
-        strDate = formatterFullDate.format(listItem.getSentTime());
+
         strDateDay = formatterDay.format(listItem.getSentTime());
         strDateYear = formatterYear.format(listItem.getSentTime());
 
@@ -143,7 +145,8 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
         db.collection(chatRoomsCollection)
                 .document(chatRoomID)
                 .collection(messagesCollection)
-                .orderBy("sentTime")
+                .orderBy("sentTime", Query.Direction.DESCENDING)
+                .limit(1)
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -152,25 +155,35 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
 
                             List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
 
-                            int index = list.size()-1;
+                            int index = 0;
 
-                            ConversationsClass thisItem = list.get(index).toObject(ConversationsClass.class);
-
+                            ConversationsClass thisConversation = list.get(index).toObject(ConversationsClass.class);
+                            strDate = formatterFullDate.format(thisConversation.getSentTime());
 
                             if (strDate.equals(currentDateString) && strDateYear.equals(currentDateStringYear)){
-                                sentTime.setText("Today");
+                                sentTime.setText(formatterTime.format(thisConversation.getSentTime()));
                             }
                             else if (Integer.parseInt(strDateDay) == Integer.parseInt(currentDateStringDay)-1 && strDateYear.equals(currentDateStringYear)){
                                 sentTime.setText("Yesterday");
                             }
                             else if (strDateYear.equals(currentDateStringYear)){
-                                sentTime.setText(formatterHalfDate.format(thisItem.getSentTime()));
+                                sentTime.setText(formatterHalfDate.format(thisConversation.getSentTime()));
                             }
                             else {
                                 sentTime.setText(strDate);
                             }
+                            // Remove all tab spaces and enters and replace them with spaces
+                            String messageBody = thisConversation.getMessageBody().replaceAll("\\s", " ");
 
-                            lastMessage.setText(thisItem.getMessageBody());
+                            // Trim the string to the first 30 characters. Add ellipses if message length exceeds 30 chars
+                            String trimmedString;
+                            int preferredMessageLength = 30;
+                            if (Math.min(messageBody.length(), preferredMessageLength) == messageBody.length()){
+                                trimmedString = messageBody;
+                            } else {
+                                trimmedString = messageBody.substring(0, preferredMessageLength) + "...";
+                            }
+                            lastMessage.setText(trimmedString);
                         }
                         else {
                             //
