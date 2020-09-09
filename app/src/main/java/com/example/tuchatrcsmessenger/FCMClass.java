@@ -53,8 +53,13 @@ public class FCMClass extends FirebaseMessagingService {
 
             String chatRoomId = remoteMessage.getData().get("chatRoom_id");
 
-            buildNotification(title, message, sender, sender_id, chatRoomId);
-
+            if (ChatsActivity.chatRoomId == null) {
+                buildNotification(title, message, sender, sender_id, chatRoomId);
+            } else {
+                if (!ChatsActivity.chatRoomId.equals(chatRoomId)) {
+                    buildNotification(title, message, sender, sender_id, chatRoomId);
+                }
+            }
         }
         Log.d("MessagingService", "Received message " + remoteMessage.getData().toString());
 
@@ -68,6 +73,7 @@ public class FCMClass extends FirebaseMessagingService {
         intent.putExtra("Sender Name", sender);
         intent.putExtra("id", sender_id);
         intent.putExtra("Chat ID", chatRoomId);
+        intent.putExtra("open_main_activity", true);
 
         PendingIntent notifyPendingIntent = PendingIntent.getActivity(
                 this,

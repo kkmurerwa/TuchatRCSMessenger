@@ -3,6 +3,7 @@ package com.example.tuchatrcsmessenger;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,6 +46,9 @@ public class ChatsActivity extends AppCompatActivity {
     private String senderName;
     private String myName;
     private String chatRoomID;
+
+    //new chatRoomId to avoid interfering with the other since this is static.
+    public static String chatRoomId = null;
 
     //Layout variables
     private RecyclerView recyclerView;
@@ -112,11 +116,12 @@ public class ChatsActivity extends AppCompatActivity {
             senderName = intent.getStringExtra("Sender Name");
             setTitle(senderName);
         }
-        if(intent.hasExtra("id")){
+        if (intent.hasExtra("id")) {
             receiverUserID = intent.getStringExtra("id");
         }
 
         chatRoomID = intent.getStringExtra("Chat ID");
+        chatRoomId = intent.getStringExtra("Chat ID");
 
         //Initialize firebase variables
         firebaseAuth = FirebaseAuth.getInstance();
@@ -400,11 +405,39 @@ public class ChatsActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        chatRoomId = null;
+        Log.d("ChatsActivityLife", "OnPause Called - ID = " + chatRoomId);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        chatRoomId = chatRoomID;
+        Log.d("ChatsActivityLife", "OnResume Called - ID = " + chatRoomId);
+    }
+
+    @Override
     public void finish() {
         //This method specifies the actions to do if the user presses back button while in this activity
         super.finish();
-
+        chatRoomId = null;
         //Animate transition to calling activity
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        chatRoomId = null;
+
+        if (getIntent().hasExtra("open_main_activity")) {
+            startActivity(new Intent(this, MainActivity.class));
+            this.finish();
+            overridePendingTransition(R.anim.slide_out_left, R.anim.slide_in_right);
+        }
+    }
+
 }
