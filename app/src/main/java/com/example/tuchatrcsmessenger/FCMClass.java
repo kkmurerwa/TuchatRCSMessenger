@@ -20,7 +20,7 @@ import com.example.tuchatrcsmessenger.Classes.SaveTokenObject;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -28,10 +28,8 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Objects;
-import java.util.Random;
+
 
 public class FCMClass extends FirebaseMessagingService {
 
@@ -55,8 +53,13 @@ public class FCMClass extends FirebaseMessagingService {
 
             String chatRoomId = remoteMessage.getData().get("chatRoom_id");
 
-            buildNotification(title, message, sender, sender_id, chatRoomId);
-
+            if (ChatsActivity.chatRoomId == null) {
+                buildNotification(title, message, sender, sender_id, chatRoomId);
+            } else {
+                if (!ChatsActivity.chatRoomId.equals(chatRoomId)) {
+                    buildNotification(title, message, sender, sender_id, chatRoomId);
+                }
+            }
         }
         Log.d("MessagingService", "Received message " + remoteMessage.getData().toString());
 
@@ -70,6 +73,7 @@ public class FCMClass extends FirebaseMessagingService {
         intent.putExtra("Sender Name", sender);
         intent.putExtra("id", sender_id);
         intent.putExtra("Chat ID", chatRoomId);
+        intent.putExtra("open_main_activity", true);
 
         PendingIntent notifyPendingIntent = PendingIntent.getActivity(
                 this,
@@ -114,8 +118,10 @@ public class FCMClass extends FirebaseMessagingService {
                     .setAutoCancel(true);
 
             mBuilder.setContentIntent(notifyPendingIntent);
-            assert notificationManager != null;
-            notificationManager.notify(notificationId, mBuilder.build());
+
+            if (notificationManager != null) {
+                notificationManager.notify(notificationId, mBuilder.build());
+            }
 
         } else {
             int notificationId = buildNotificationId(chatRoomId);
@@ -146,7 +152,9 @@ public class FCMClass extends FirebaseMessagingService {
             builder.setContentIntent(notifyPendingIntent);
             NotificationManager mNotificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManager.notify(notificationId, builder.build());
+            if (mNotificationManager != null) {
+                mNotificationManager.notify(notificationId, builder.build());
+            }
         }
 
 
