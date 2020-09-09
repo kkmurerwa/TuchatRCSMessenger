@@ -8,12 +8,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,13 +28,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tuchatrcsmessenger.Adapters.ContactsAdapter;
 import com.example.tuchatrcsmessenger.Classes.ContactsInfoClass;
+import com.example.tuchatrcsmessenger.data.db.AppDatabase;
+import com.example.tuchatrcsmessenger.data.entity.ContactsClass;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -43,6 +52,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -71,11 +81,15 @@ public class NewConversationActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 0;
     private int dismissStatus = 0;
 
-    private List<ContactsInfoClass> contactsListItems;
+    private List<ContactsClass> contactsListItems;
+    private List<ContactsClass> contactsToBeSaved;
     private List<ContactsInfoClass> contactsOnTuchatListItem;
     private CollectionReference dbContactsCollection;
     private List<ContactsInfoClass> contactsOnTuchatFromFireStore;
     private ContactsAdapter adapter;
+
+    private AppDatabase appDatabase;
+    private Boolean dontHideProgress = false;
 
 
     @Override
@@ -122,22 +136,17 @@ public class NewConversationActivity extends AppCompatActivity {
         contactsOnTuchatListItem = new ArrayList<>();
         contactsOnTuchatFromFireStore = new ArrayList<>();
 
-        getContactsFromFirestore();
-        updatesListener();
+        appDatabase = AppDatabase.getInstance(this);
+
+        setAdapter();
+        getSavedContacts();
     }
 
     public void requestContactsPermission() {
         int readContacts = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS);
         if (readContacts != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_CONTACTS)) {
-                //Do something if request was previously denied
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_CONTACTS}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
-            } else {
-                //Do something if request has never been denied or accepted
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_CONTACTS}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
-            }
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_CONTACTS}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
         }
     }
 
@@ -188,6 +197,7 @@ public class NewConversationActivity extends AppCompatActivity {
 
 
     public void getContacts() {
+
         ContentResolver contentResolver = getContentResolver();
         String contactId;
         String displayName;
@@ -199,10 +209,13 @@ public class NewConversationActivity extends AppCompatActivity {
                 if (hasPhoneNumber > 0) {
 
                     ContactsInfoClass contactsInfoClass = new ContactsInfoClass();
+                    ContactsClass contactsClass = new ContactsClass();
                     contactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
                     displayName = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
                     contactsInfoClass.setDisplayName(displayName);
+                    contactsClass.setDisplayName(displayName);
+                    contactsClass.setId(contactId);
 
                     Cursor phoneCursor = getContentResolver().query(
                             Phone.CONTENT_URI,
@@ -220,23 +233,17 @@ public class NewConversationActivity extends AppCompatActivity {
                         }
 
                         contactsInfoClass.setPhoneNumber(phoneNumber);
+                        contactsClass.setPhoneNumber(phoneNumber);
                     }
                     phoneCursor.close();
-                    contactsListItems.add(contactsInfoClass);
+                    contactsListItems.add(contactsClass);
                 }
             }
         }
         cursor.close();
+        checkContactsAgainstFirestoreUsers();
 
-        if (!contactsListItems.isEmpty()) {
-            try {
-                checkContactsAgainstFirestoreUsers();
-            } catch (Exception e) {
-                //Error caught with no action
-            }
-        } else {
-            Toast.makeText(this, "Could not retrieve your contacts. Maybe you have none?", Toast.LENGTH_SHORT).show();
-        }
+
     }
 
     public String chatIdGenerator() {
@@ -288,6 +295,14 @@ public class NewConversationActivity extends AppCompatActivity {
         if (id == R.id.refresh_contacts) {
             //Code to refresh contacts
             //Show snack bar with message
+
+
+            placeHolderLayout.setVisibility(View.GONE);
+            progressBarLayout.setVisibility(View.VISIBLE);
+            dontHideProgress = true;
+            //Delete Current Db
+            new DeleteDb(NewConversationActivity.this).execute();
+
             View parentLayout = findViewById(android.R.id.content);
             Snackbar.make(parentLayout, "Refreshing contacts...", Snackbar.LENGTH_LONG).show();
 
@@ -297,7 +312,7 @@ public class NewConversationActivity extends AppCompatActivity {
                 }
 
                 public void onFinish() {
-                    //Finish current activity
+
                     Toast.makeText(NewConversationActivity.this, "I have been called", Toast.LENGTH_SHORT).show();
                     getContacts();
                 }
@@ -308,87 +323,42 @@ public class NewConversationActivity extends AppCompatActivity {
     }
 
     private void checkContactsAgainstFirestoreUsers() {
-        db.collection(userInfoCollection)
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if (!queryDocumentSnapshots.isEmpty()) {
-                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-
-                            for (ContactsInfoClass contact : contactsListItems) {
-                                String phoneNumber = contact.getPhoneNumber();
-
+        for (int i = 0; i < contactsListItems.size(); i++) {
+            final int finalI = i;
+            db.collection(userInfoCollection)
+                    .get()
+                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            Log.d("SearchContacts", queryDocumentSnapshots.toString());
+                            if (!queryDocumentSnapshots.isEmpty()) {
+                                List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
                                 for (DocumentSnapshot d : list) {
-                                    if (Objects.requireNonNull(d.getString("user_phone")).equals(phoneNumber)) {
-                                        saveContactsToFirestore(contact);
+                                    if (Objects.requireNonNull(d.getString("user_phone")).equals(contactsListItems.get(finalI).getPhoneNumber())) {
+                                        savetoDB(contactsListItems.get(finalI));
                                     }
                                 }
                             }
                         }
-                    }
-                });
+                    });
+        }
     }
 
-    private void updatesListener() {
-        dbContactsCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                getContactsFromFirestore();
-            }
-        });
-    }
-    private void saveContactsToFirestore(ContactsInfoClass contactObject) {
-        dbContactsCollection.document(contactObject.getPhoneNumber())
-                .set(contactObject)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        //Do stuff
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        //Do stuff
-                    }
-                });
+    private void getSavedContacts() {
+        new RetrieveContacts(NewConversationActivity.this).execute();
     }
 
-    private void getContactsFromFirestore() {
-        dbContactsCollection
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if (!queryDocumentSnapshots.isEmpty()) {
-                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+    private void savetoDB(ContactsClass contactsClass) {
 
-                            contactsOnTuchatFromFireStore.clear();
+        new InsertTask(this, contactsClass).execute();
+
+    }
 
 
-                            for (DocumentSnapshot d : list) {
-                                ContactsInfoClass p = d.toObject(ContactsInfoClass.class);
+    public void setAdapter() {
+        adapter = new ContactsAdapter(NewConversationActivity.this);
+        newConversationRecyclerView.setAdapter(adapter);
 
-
-                                contactsOnTuchatFromFireStore.add(p);
-                            }
-
-
-                            adapter = new ContactsAdapter(contactsOnTuchatFromFireStore, NewConversationActivity.this);
-                            newConversationRecyclerView.setAdapter(adapter);
-
-
-                            newConversationRecyclerView.setVisibility(View.VISIBLE);
-                            progressBarLayout.setVisibility(View.GONE);
-                            placeHolderLayout.setVisibility(View.GONE);
-                        } else {
-                            newConversationRecyclerView.setVisibility(View.GONE);
-                            progressBarLayout.setVisibility(View.GONE);
-                            placeHolderLayout.setVisibility(View.VISIBLE);
-                        }
-                    }
-                });
     }
 
     public void nextActivityCaller(String phoneNumber) {
@@ -421,5 +391,117 @@ public class NewConversationActivity extends AppCompatActivity {
         //Animate transition into called activity
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
+
+
+    /**
+     * The following classes are used by java to do actions in background. Since we are accesing db we must do everything in
+     * background. In Kotlin its much easier. We dont need all these.
+     */
+
+
+    //Retrieving contacts
+
+    public static class RetrieveContacts extends AsyncTask<Void, Void, LiveData<List<ContactsClass>>> {
+
+        private WeakReference<NewConversationActivity> activityReference;
+
+        RetrieveContacts(NewConversationActivity context) {
+            activityReference = new WeakReference<>(context);
+        }
+
+
+        @Override
+        protected LiveData<List<ContactsClass>> doInBackground(Void... voids) {
+            if (activityReference.get() != null)
+                return activityReference.get().appDatabase.getContactsDao().getContacts();
+            else
+                return null;
+
+        }
+
+        @Override
+        protected void onPostExecute(LiveData<List<ContactsClass>> contactsClassesLiveData) {
+            super.onPostExecute(contactsClassesLiveData);
+
+            contactsClassesLiveData.observe(activityReference.get(), new Observer<List<ContactsClass>>() {
+                @Override
+                public void onChanged(List<ContactsClass> contactsClasses) {
+
+                    if (contactsClasses != null && !contactsClasses.isEmpty()) {
+
+                        activityReference.get().adapter.setListItems(contactsClasses);
+                        activityReference.get().progressBarLayout.setVisibility(View.GONE);
+                        activityReference.get().placeHolderLayout.setVisibility(View.GONE);
+                        activityReference.get().newConversationRecyclerView.setVisibility(View.VISIBLE);
+
+                    } else {
+                        activityReference.get().newConversationRecyclerView.setVisibility(View.GONE);
+
+
+                        if (activityReference.get().dontHideProgress) {
+                            activityReference.get().progressBarLayout.setVisibility(View.VISIBLE);
+                            activityReference.get().placeHolderLayout.setVisibility(View.GONE);
+                            activityReference.get().dontHideProgress = false;
+                        } else {
+                            activityReference.get().progressBarLayout.setVisibility(View.GONE);
+                            activityReference.get().placeHolderLayout.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+
+                }
+            });
+
+
+        }
+    }
+
+
+    //Adding contacts to db
+    private static class InsertTask extends AsyncTask<Void, Void, Boolean> {
+
+        private WeakReference<NewConversationActivity> activityReference;
+        private ContactsClass contactsClass;
+
+        // only retain a weak reference to the activity
+        InsertTask(NewConversationActivity context, ContactsClass contactsClass) {
+            activityReference = new WeakReference<>(context);
+            this.contactsClass = contactsClass;
+        }
+
+        // doInBackground methods runs on a worker thread
+        @Override
+        protected Boolean doInBackground(Void... objs) {
+            activityReference.get().appDatabase.getContactsDao().insertContact(contactsClass);
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+        }
+    }
+
+    private static class DeleteDb extends AsyncTask<Void, Void, Boolean> {
+
+        private WeakReference<NewConversationActivity> activityReference;
+
+
+        // only retain a weak reference to the activity
+        DeleteDb(NewConversationActivity context) {
+            activityReference = new WeakReference<>(context);
+
+        }
+
+        // doInBackground methods runs on a worker thread
+        @Override
+        protected Boolean doInBackground(Void... objs) {
+            activityReference.get().appDatabase.getContactsDao().deleteAll();
+            return true;
+        }
+
+
+    }
+
 
 }

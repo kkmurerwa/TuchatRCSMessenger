@@ -12,16 +12,25 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.tuchatrcsmessenger.Classes.ContactsInfoClass;
 import com.example.tuchatrcsmessenger.NewConversationActivity;
 import com.example.tuchatrcsmessenger.R;
+import com.example.tuchatrcsmessenger.data.entity.ContactsClass;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> {
-    private List<ContactsInfoClass> listItems;
+    private List<ContactsClass> listItems = new ArrayList<>();
     private Context context;
 
-    public ContactsAdapter(List<ContactsInfoClass> listItems, Context context) {
-        this.listItems = listItems;
+    public ContactsAdapter(Context context) {
+
         this.context = context;
+    }
+
+
+    public void setListItems(List<ContactsClass> newList) {
+        listItems.clear();
+        listItems.addAll(newList);
+        this.notifyDataSetChanged();
     }
 
 
@@ -35,7 +44,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        ContactsInfoClass listItem = listItems.get(position);
+        ContactsClass listItem = listItems.get(position);
 
         holder.contactDisplayName.setText(listItem.getDisplayName());
         holder.contactPhoneNumber.setText(listItem.getPhoneNumber());
@@ -47,8 +56,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     }
 
 
-
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView contactDisplayName;
         public TextView contactPhoneNumber;
