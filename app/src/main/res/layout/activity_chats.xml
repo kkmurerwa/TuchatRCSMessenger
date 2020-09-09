@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     android:orientation="vertical"
     tools:context=".ChatsActivity">
 
@@ -16,14 +17,12 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@color/colorPrimary"
         android:orientation="vertical">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chats_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorPrimary"
             android:visibility="gone"
             app:stackFromEnd="true" />
 
@@ -36,7 +35,6 @@
                 android:id="@+id/chats_empty_placeholder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:visibility="visible">
@@ -63,7 +61,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:background="@color/colorPrimary"
         android:orientation="horizontal"
         android:paddingHorizontal="10dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
@@ -77,24 +74,24 @@
             android:layout_marginVertical="7dp"
             android:layout_marginEnd="10dp"
             android:layout_weight="1"
+            android:autofillHints=""
             android:background="@drawable/type_message_edit_text"
             android:hint="@string/type_a_message"
-            android:textColorHint="@color/colorPrimaryLight"
-            android:textColor="@color/colorText"
             android:inputType="textMultiLine|textCapSentences"
             android:maxHeight="90dp"
             android:minHeight="50dp"
             android:paddingHorizontal="30dp"
             android:paddingVertical="5dp"
-            android:autofillHints="" />
+            android:textColor="@color/colorText"
+            android:textColorHint="@color/colorPrimaryLight" />
 
         <ImageButton
             android:id="@+id/send_message_button"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@drawable/send_message_button"
             android:background="@drawable/type_message_edit_text"
-            android:contentDescription="@string/send_message_button_drawable" />
+            android:contentDescription="@string/send_message_button_drawable"
+            android:src="@drawable/send_message_button" />
 
     </LinearLayout>
 
