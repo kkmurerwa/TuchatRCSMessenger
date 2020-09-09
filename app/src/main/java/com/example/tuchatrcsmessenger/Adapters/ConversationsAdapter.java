@@ -169,8 +169,18 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
                             else {
                                 sentTime.setText(strDate);
                             }
+                            // Remove all tab spaces and enters and replace them with spaces
+                            String messageBody = thisItem.getMessageBody().replaceAll("\\s", " ");
 
-                            lastMessage.setText(thisItem.getMessageBody());
+                            // Trim the string to the first 30 characters. Add ellipses if message length exceeds 30 chars
+                            String trimmedString;
+                            int preferredMessageLength = 30;
+                            if (Math.min(messageBody.length(), preferredMessageLength) == messageBody.length()){
+                                trimmedString = messageBody;
+                            } else {
+                                trimmedString = messageBody.substring(0, preferredMessageLength) + "...";
+                            }
+                            lastMessage.setText(trimmedString);
                         }
                         else {
                             //
