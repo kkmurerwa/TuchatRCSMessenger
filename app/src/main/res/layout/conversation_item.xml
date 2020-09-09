@@ -45,7 +45,7 @@
                 android:layout_marginRight="28dp"
                 android:textAllCaps="false"
                 android:textColor="@color/colorText"
-                android:textSize="15sp"
+                android:textSize="13sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
