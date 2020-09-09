@@ -15,29 +15,6 @@ exports.sendNotification = functions.firestore.document('chatrooms/{chatRoomId}/
         let tokens = [];
         let chatRoomRef = admin.firestore().collection("chatrooms").doc(chatRoomId);
 
-        /*try {
-            const transaction = await admin.firestore().runTransaction(t => {
-                const chatroom = await t.get(chatRoomRef);
-                const usersArray = chatroom.data().chatMembers;
-                usersArray.forEach(user_id => {
-                    let userIdRef = admin.firestore().collection("tokens").doc(user_id);
-                    const tokenDoc = await t.get(userIdRef);
-
-                    if (tokenDoc.exists) {
-                        let user_token = doc.data().token;
-                        functions.logger.log('token: ', user_token);
-                        tokens.push(user_token);
-                    }
-                });
-            });
-
-
-
-
-        } catch (error) {
-            //All errors that can pop up from our await statements are caught here
-            functions.logger.error('Await error: ', err);
-        }*/
 
         return admin.firestore().runTransaction(t => {
             return t.get(chatRoomRef)
@@ -64,7 +41,7 @@ exports.sendNotification = functions.firestore.document('chatrooms/{chatRoomId}/
 
             //Check if length of tokens evaluates to a truthy value (Is not empty)
             if (tokens.length ) {
-                functions.logger.log("Construction the notification message.");
+
                 const payload = {
 
                     data: {

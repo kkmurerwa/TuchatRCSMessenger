@@ -52,7 +52,7 @@ public class ChatsActivity extends AppCompatActivity {
 
     //Layout variables
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
+    private MessagesAdapter adapter;
     private LinearLayout emptyPlaceholder;
     private EditText typedMessage;
 
@@ -72,7 +72,7 @@ public class ChatsActivity extends AppCompatActivity {
 
 
     //Variable to hold messages
-    List<messagesClass> messagesList;
+    List<messagesClass> messagesList = new ArrayList<>();
 
     Date date;
 
@@ -142,18 +142,6 @@ public class ChatsActivity extends AppCompatActivity {
                 .document(chatRoomID)
                 .collection(messagesCollection);
 
-        //TODO: Add code to update the user path
-
-        //Initialize array
-        messagesList = new ArrayList<messagesClass>();
-
-        //Set message scroll to always be scrolled at bottom
-        LinearLayoutManager lm = new LinearLayoutManager(this);
-        lm.setStackFromEnd(true);
-
-        //Initialize recyclerview
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(lm);
 
         ImageButton sendMessage = findViewById(R.id.send_message_button);
         typedMessage = findViewById(R.id.typed_message);
@@ -176,8 +164,8 @@ public class ChatsActivity extends AppCompatActivity {
         });
 
 
+        setAdapter();
         retrieveMyUserName();
-        getMessagesFromFirestore();
         updatesListener();
 
 
@@ -185,31 +173,19 @@ public class ChatsActivity extends AppCompatActivity {
 
     private void hideSoftKeyBoard() {
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
     }
 
     private void updatesListener() {
-        dbPath.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                getMessagesFromFirestore();
-            }
-        });
-    }
-
-    private void getMessagesFromFirestore() {
         dbPath.orderBy("sentTime")
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                         messageCount = queryDocumentSnapshots.size();
                         if (!queryDocumentSnapshots.isEmpty()) {
                             List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
 
-
-                            if (!messagesList.isEmpty()) {
-                                messagesList.clear();
-                            }
+                            messagesList.clear();
 
                             for (DocumentSnapshot d : list) {
                                 messagesClass p = d.toObject(messagesClass.class);
@@ -223,31 +199,35 @@ public class ChatsActivity extends AppCompatActivity {
                                 messagesList.add(listItem);
                             }
 
-                            adapter = new MessagesAdapter(messagesList, ChatsActivity.this);
-                            recyclerView.setAdapter(adapter);
-
                             recyclerView.setVisibility(View.VISIBLE);
                             emptyPlaceholder.setVisibility(View.GONE);
+
+                            adapter.setList(messagesList);
+                            adapter.notifyDataSetChanged();
+                            recyclerView.scrollToPosition(adapter.getItemCount() - 1);
 
                         } else {
                             recyclerView.setVisibility(View.GONE);
                             emptyPlaceholder.setVisibility(View.VISIBLE);
                         }
                     }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        //Some stuff
-                    }
                 });
+    }
+
+    private void setAdapter() {
+        adapter = new MessagesAdapter(ChatsActivity.this);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager lm = new LinearLayoutManager(this);
+        lm.setStackFromEnd(true);
+        recyclerView.setLayoutManager(lm);
 
     }
+
 
     private void saveMessagesToFirestore() {
         date = new Date();
         date.getTime();
-
 
         String chtRmId = chatRoomID;
 
@@ -259,23 +239,8 @@ public class ChatsActivity extends AppCompatActivity {
                 chtRmId,
                 FirebaseAuth.getInstance().getUid()
         );
+        dbPath.add(messagesClass);
 
-        messagesList.add(messagesClass);
-        adapter.notifyDataSetChanged();
-
-        dbPath.add(messagesClass)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        //Some stuff
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        //Some stuff
-                    }
-                });
     }
 
     public void retrieveSenderUserName() {
