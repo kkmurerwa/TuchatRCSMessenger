@@ -12,10 +12,10 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:contentDescription="@string/messenger_logo"
-        app:srcCompat="@drawable/ic_launcher_foreground"
+        app:srcCompat="@mipmap/ic_launcher"
         tools:layout_editor_absoluteX="142dp"
         tools:layout_editor_absoluteY="148dp" />
 

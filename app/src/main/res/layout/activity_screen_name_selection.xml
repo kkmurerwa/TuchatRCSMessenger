@@ -10,6 +10,15 @@
     android:layout_height="match_parent"
     tools:context=".SignInActivity">
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/messenger_logo"
+        app:srcCompat="@mipmap/ic_launcher"
+        tools:layout_editor_absoluteX="142dp"
+        tools:layout_editor_absoluteY="148dp" />
+
     <TextView
         android:id="@+id/screen_name_prompt"
         android:layout_width="wrap_content"
@@ -61,7 +70,7 @@
             android:textAllCaps="false"
             android:id="@+id/screen_name_button"
             android:padding="12dp"
-            android:textSize="24sp"
+            android:textSize="@dimen/sign_in_button_text_size"
             android:background="@drawable/rounded_sign_in_button"
             android:textColor="@color/colorAccent"/>
 
