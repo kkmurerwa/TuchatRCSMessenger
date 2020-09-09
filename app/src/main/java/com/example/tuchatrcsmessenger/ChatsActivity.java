@@ -163,11 +163,9 @@ public class ChatsActivity extends AppCompatActivity {
             }
         });
 
-
         setAdapter();
         retrieveMyUserName();
         updatesListener();
-
 
     }
 
@@ -223,7 +221,6 @@ public class ChatsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(lm);
 
     }
-
 
     private void saveMessagesToFirestore() {
         date = new Date();
