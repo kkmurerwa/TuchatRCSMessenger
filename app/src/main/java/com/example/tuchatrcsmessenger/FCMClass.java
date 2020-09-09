@@ -107,11 +107,11 @@ public class FCMClass extends FirebaseMessagingService {
                                     .setBigContentTitle(sender)
                                     .setSummaryText("New message")
                     )
-                    .setSmallIcon(R.drawable.user_icon)
+                    .setSmallIcon(R.mipmap.ic_launcher)
                     .setLargeIcon(
                             BitmapFactory.decodeResource(
                                     getApplicationContext().getResources(),
-                                    R.drawable.user_icon
+                                    R.mipmap.ic_launcher
                             )
                     )
                     .setOnlyAlertOnce(true)
