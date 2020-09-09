@@ -26,6 +26,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Source;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -132,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
     public void getDataFromFireStore() {
         //Get data from database
         dbConversationsCollection
-                .get()
+                .get(Source.CACHE)
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -157,8 +158,8 @@ public class MainActivity extends AppCompatActivity {
                                 listItems.add(listItem);
                             }
 
-                            adapter = new ConversationsAdapter(listItems, MainActivity.this);
-                            conversationsRecyclerView.setAdapter(adapter);
+//                            adapter = new ConversationsAdapter(listItems, MainActivity.this);
+//                            conversationsRecyclerView.setAdapter(adapter);
 
                             conversationsRecyclerView.setVisibility(View.VISIBLE);
                             progressBarLoader.setVisibility(View.GONE);
@@ -171,6 +172,17 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Call the adapter to retrieve last message
+        if (!(listItems == null)){
+            adapter = new ConversationsAdapter(listItems, MainActivity.this);
+            conversationsRecyclerView.setAdapter(adapter);
+        }
     }
 
     @Override
