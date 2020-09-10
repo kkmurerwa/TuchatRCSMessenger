@@ -15,6 +15,7 @@ public class ContactsClass {
 
     public ContactsClass() {
 
+
     }
 
     public ContactsClass(@NonNull String id, String displayName, String phoneNumber) {

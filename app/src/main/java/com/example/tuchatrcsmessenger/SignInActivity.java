@@ -45,6 +45,41 @@ public class SignInActivity extends AppCompatActivity {
     //Firebase variables
     FirebaseAuth firebaseAuth;
     String verificationID;
+    private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+        @Override
+        public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
+            //Detect the code automatically
+            String code = phoneAuthCredential.getSmsCode();
+            if (code != null) {
+                //Call verify code method if code is automatically retrieved
+                verifyCode(code);
+            }
+        }
+
+        @Override
+        public void onVerificationFailed(@NonNull FirebaseException e) {
+
+            Log.e("LogInError", e.getLocalizedMessage() + e.getMessage());
+            ProgressBarController controller = new ProgressBarController();
+            controller.hideProgressbar(signInButton, progressBarLayout);
+        }
+
+        @Override
+        public void onCodeSent(@NonNull String s, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+            super.onCodeSent(s, forceResendingToken);
+            verificationID = s;
+        }
+
+        @Override
+        public void onCodeAutoRetrievalTimeOut(@NonNull String s) {
+            //Do something if auto retrieval times out
+            super.onCodeAutoRetrievalTimeOut(s);
+
+            //Change to verification mode only if the number is valid
+            verificationMode = true;
+            changeToVerificationMode();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,43 +174,6 @@ public class SignInActivity extends AppCompatActivity {
                 this,               // Activity (for callback binding)
                 mCallbacks);        // OnVerificationStateChangedCallbacks
     }
-
-    private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-        @Override
-        public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
-            //Detect the code automatically
-            String code = phoneAuthCredential.getSmsCode();
-            if (code != null) {
-                //Call verify code method if code is automatically retrieved
-                verifyCode(code);
-            }
-        }
-
-        @Override
-        public void onVerificationFailed(@NonNull FirebaseException e) {
-
-            Log.e("LogInError", e.getLocalizedMessage() + e.getMessage());
-            ProgressBarController controller = new ProgressBarController();
-            controller.hideProgressbar(signInButton, progressBarLayout);
-        }
-
-        @Override
-        public void onCodeSent(@NonNull String s, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-            super.onCodeSent(s, forceResendingToken);
-            verificationID = s;
-        }
-
-        @Override
-        public void onCodeAutoRetrievalTimeOut(@NonNull String s) {
-            //Do something if auto retrieval times out
-            super.onCodeAutoRetrievalTimeOut(s);
-
-            //Change to verification mode only if the number is valid
-            verificationMode = true;
-            changeToVerificationMode();
-        }
-    };
-
 
     private void verifyCode(String code) {
         //This verifies the code either entered by the user or auto-retrieved

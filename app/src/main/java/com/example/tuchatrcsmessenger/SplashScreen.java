@@ -39,7 +39,7 @@ public class SplashScreen extends AppCompatActivity {
 
             public void onFinish() {
                 //Perform actions when timer is finished
-                if (firebaseUser != null){
+                if (firebaseUser != null) {
                     //Add code to do if user is logged in
                     Intent mainActivity = new Intent(SplashScreen.this, MainActivity.class);
 
@@ -51,8 +51,7 @@ public class SplashScreen extends AppCompatActivity {
 
                     //Animate transition into called activity
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                }
-                else {
+                } else {
                     //Add code here if user is not logged in
                     welcomeScreen = new Intent(SplashScreen.this, WelcomeScreen.class);
 

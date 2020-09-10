@@ -8,7 +8,8 @@ public class ConversationsClass {
     public Date sentTime;
 
 
-    public ConversationsClass() {}
+    public ConversationsClass() {
+    }
 
     public ConversationsClass(String senderName, String messageBody, Date sentTime, String chatRoomId) {
         this.senderName = senderName;

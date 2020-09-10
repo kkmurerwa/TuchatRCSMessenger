@@ -8,10 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tuchatrcsmessenger.ChatsActivity;
@@ -27,15 +29,16 @@ import java.util.List;
 @SuppressLint("SimpleDateFormat")
 public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    Date today;
+    messagesClass previousListItem;
     private Context context;
+    private Integer currentPosition = null;
     private String myName;
     private List<messagesClass> listItems;
     private SimpleDateFormat formatterMessageTime = new SimpleDateFormat("HH:mm");
     private SimpleDateFormat formatterDate = new SimpleDateFormat("dd MMM yyyy");
     private SimpleDateFormat formatterHalfDate = new SimpleDateFormat("MMM yyyy");
     private SimpleDateFormat formatterDay = new SimpleDateFormat("dd");
-    Date today;
-    messagesClass previousListItem;
 
     public MessagesAdapter(Context context) {
         this.context = context;
@@ -46,6 +49,10 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void setList(List<messagesClass> newList) {
         listItems.clear();
         listItems.addAll(newList);
+    }
+
+    public void setCurrentPosition(Integer position) {
+        currentPosition = position;
     }
 
 
@@ -104,6 +111,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         LinearLayout datePillLL;
 
+        ProgressBar sentMessage;
+
 
         SentViewHolder(@NonNull final View itemView) {
             super(itemView);
@@ -124,6 +133,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             datePillLL = itemView.findViewById(R.id.date_pill_linear_layout);
 
+            sentMessage = itemView.findViewById(R.id.sent_progress);
 
             messageSentTime = itemView.findViewById(R.id.time_message_sent);
 
@@ -133,6 +143,22 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         void bind(messagesClass listItem, int position) {
             today = new Date();
             today.getTime();
+
+            ((ChatsActivity) context).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    sentMessage.setVisibility(View.GONE);
+                }
+            });
+
+            if (currentPosition != null) {
+
+                if (currentPosition == getAdapterPosition()) {
+                    sentMessage.setVisibility(View.VISIBLE);
+                    ((ChatsActivity) context).setCurrentProgress(sentMessage);
+                }
+
+            }
 
             String currentMessageDate = formatterDate.format(listItem.sentTime);
             String currentMessageHalfDate = formatterHalfDate.format(listItem.sentTime);

@@ -7,7 +7,8 @@ public class messagesClass {
     public String senderName, messageBody, chatRoomId, userId;
     public Date sentTime;
 
-    public messagesClass() {}
+    public messagesClass() {
+    }
 
     public messagesClass(String senderName, String messageBody, Date sentTime, String chatRoomId, String userId) {
         this.senderName = senderName;

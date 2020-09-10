@@ -33,6 +33,16 @@ import java.util.List;
 
 @SuppressLint("SimpleDateFormat")
 public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdapter.ViewHolder> {
+    //Firebase
+    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    //Firebase path variables
+    String chatRoomsCollection = "chatrooms";
+    String messagesCollection = "messages";
+    //
+    String strDate;
+    String strDateDay;
+    String strDateYear;
     private List<ConversationsClass> listItems;
     private Context context;
     private Date currentDate;
@@ -44,21 +54,6 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
     private String currentDateString;
     private String currentDateStringDay;
     private String currentDateStringYear;
-
-    //Firebase
-    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-    //Firebase path variables
-    String chatRoomsCollection = "chatrooms";
-    String messagesCollection = "messages";
-
-    //
-    String strDate;
-    String strDateDay;
-    String strDateYear;
-
-
 
 
     public ConversationsAdapter(List<ConversationsClass> listItems, Context context) {
@@ -85,7 +80,6 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
         ConversationsClass listItem = listItems.get(position);
 
 
-
         strDateDay = formatterDay.format(listItem.getSentTime());
         strDateYear = formatterYear.format(listItem.getSentTime());
 
@@ -102,45 +96,8 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
         return listItems.size();
     }
 
-
-
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-
-        public TextView sender;
-        public TextView sentTime;
-        public TextView messageBody;
-        public Button readStatusButton;
-        public String readStatus;
-        public String chatID;
-
-
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            itemView.setOnClickListener(this);
-
-            sender = itemView.findViewById(R.id.sender_name);
-            sentTime = itemView.findViewById(R.id.sent_time);
-            messageBody = itemView.findViewById(R.id.message_body);
-            readStatusButton= itemView.findViewById(R.id.button);
-        }
-
-        @Override
-        public void onClick(View view) {
-            int pos = getAdapterPosition();
-
-            Intent openChatMessages = new Intent(context, ChatsActivity.class);
-            openChatMessages.putExtra("Sender Name", this.sender.getText().toString());
-            openChatMessages.putExtra("Chat ID", listItems.get(pos).chatRoomId);
-            context.startActivity(openChatMessages);
-
-            //Animate transition into called activity
-            ((MainActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-        }
-
-    }
-
     //Get last message
-    private void getLastMessage(final String chatRoomID, final TextView lastMessage, final TextView sentTime){
+    private void getLastMessage(final String chatRoomID, final TextView lastMessage, final TextView sentTime) {
 
         db.collection(chatRoomsCollection)
                 .document(chatRoomID)
@@ -160,32 +117,28 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
                             ConversationsClass thisConversation = list.get(index).toObject(ConversationsClass.class);
                             strDate = formatterFullDate.format(thisConversation.getSentTime());
 
-                            if (strDate.equals(currentDateString) && strDateYear.equals(currentDateStringYear)){
+                            if (strDate.equals(currentDateString) && strDateYear.equals(currentDateStringYear)) {
                                 sentTime.setText(formatterTime.format(thisConversation.getSentTime()));
-                            }
-                            else if (Integer.parseInt(strDateDay) == Integer.parseInt(currentDateStringDay)-1 && strDateYear.equals(currentDateStringYear)){
+                            } else if (Integer.parseInt(strDateDay) == Integer.parseInt(currentDateStringDay) - 1 && strDateYear.equals(currentDateStringYear)) {
                                 sentTime.setText("Yesterday");
-                            }
-                            else if (strDateYear.equals(currentDateStringYear)){
+                            } else if (strDateYear.equals(currentDateStringYear)) {
                                 sentTime.setText(formatterHalfDate.format(thisConversation.getSentTime()));
-                            }
-                            else {
+                            } else {
                                 sentTime.setText(strDate);
                             }
                             // Remove all tab spaces and enters and replace them with spaces
                             String messageBody = thisConversation.getMessageBody().replaceAll("\\s", " ");
 
-                            // Trim the string to the first 30 characters. Add ellipses if message length exceeds 30 chars
+                            // Trim the string to the first 30 characters. Add  ellipses if message length exceeds 30 chars
                             String trimmedString;
                             int preferredMessageLength = 30;
-                            if (Math.min(messageBody.length(), preferredMessageLength) == messageBody.length()){
+                            if (Math.min(messageBody.length(), preferredMessageLength) == messageBody.length()) {
                                 trimmedString = messageBody;
                             } else {
                                 trimmedString = messageBody.substring(0, preferredMessageLength) + "...";
                             }
                             lastMessage.setText(trimmedString);
-                        }
-                        else {
+                        } else {
                             //
                         }
                     }
@@ -196,5 +149,40 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
                         Toast.makeText(context, "Failed to retrieve your conversations", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        public TextView sender;
+        public TextView sentTime;
+        public TextView messageBody;
+        public Button readStatusButton;
+        public String readStatus;
+        public String chatID;
+
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            itemView.setOnClickListener(this);
+
+            sender = itemView.findViewById(R.id.sender_name);
+            sentTime = itemView.findViewById(R.id.sent_time);
+            messageBody = itemView.findViewById(R.id.message_body);
+            readStatusButton = itemView.findViewById(R.id.button);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int pos = getAdapterPosition();
+
+            Intent openChatMessages = new Intent(context, ChatsActivity.class);
+            openChatMessages.putExtra("Sender Name", this.sender.getText().toString());
+            openChatMessages.putExtra("Chat ID", listItems.get(pos).chatRoomId);
+            context.startActivity(openChatMessages);
+
+            //Animate transition into called activity
+            ((MainActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        }
+
     }
 }
