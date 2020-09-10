@@ -330,13 +330,19 @@ public class NewConversationActivity extends AppCompatActivity {
                         if (!queryDocumentSnapshots.isEmpty()) {
                             List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
 
+                            boolean checkIfEvenOneExist = false;
+
                             if (!list.isEmpty()) {
                                 for (int i = 0; i < contactsListItems.size(); i++) {
                                     for (DocumentSnapshot d : list) {
                                         if (Objects.requireNonNull(d.getString("user_phone")).equals(contactsListItems.get(i).getPhoneNumber())) {
                                             savetoDB(contactsListItems.get(i));
+                                            checkIfEvenOneExist = true;
                                         }
                                     }
+                                }
+                                if (!checkIfEvenOneExist) {
+                                    setListEmpty();
                                 }
                             } else {
                                 setListEmpty();
