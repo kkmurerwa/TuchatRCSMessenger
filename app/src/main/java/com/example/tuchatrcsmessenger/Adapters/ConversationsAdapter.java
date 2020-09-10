@@ -33,6 +33,16 @@ import java.util.List;
 
 @SuppressLint("SimpleDateFormat")
 public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdapter.ViewHolder> {
+    //Firebase
+    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    //Firebase path variables
+    String chatRoomsCollection = "chatrooms";
+    String messagesCollection = "messages";
+    //
+    String strDate;
+    String strDateDay;
+    String strDateYear;
     private List<ConversationsClass> listItems;
     private Context context;
     private Date currentDate;
@@ -44,19 +54,6 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
     private String currentDateString;
     private String currentDateStringDay;
     private String currentDateStringYear;
-
-    //Firebase
-    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-    //Firebase path variables
-    String chatRoomsCollection = "chatrooms";
-    String messagesCollection = "messages";
-
-    //
-    String strDate;
-    String strDateDay;
-    String strDateYear;
 
 
     public ConversationsAdapter(List<ConversationsClass> listItems, Context context) {
@@ -97,42 +94,6 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
     @Override
     public int getItemCount() {
         return listItems.size();
-    }
-
-
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        public TextView sender;
-        public TextView sentTime;
-        public TextView messageBody;
-        public Button readStatusButton;
-        public String readStatus;
-        public String chatID;
-
-
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            itemView.setOnClickListener(this);
-
-            sender = itemView.findViewById(R.id.sender_name);
-            sentTime = itemView.findViewById(R.id.sent_time);
-            messageBody = itemView.findViewById(R.id.message_body);
-            readStatusButton = itemView.findViewById(R.id.button);
-        }
-
-        @Override
-        public void onClick(View view) {
-            int pos = getAdapterPosition();
-
-            Intent openChatMessages = new Intent(context, ChatsActivity.class);
-            openChatMessages.putExtra("Sender Name", this.sender.getText().toString());
-            openChatMessages.putExtra("Chat ID", listItems.get(pos).chatRoomId);
-            context.startActivity(openChatMessages);
-
-            //Animate transition into called activity
-            ((MainActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-        }
-
     }
 
     //Get last message
@@ -188,5 +149,40 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
                         Toast.makeText(context, "Failed to retrieve your conversations", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        public TextView sender;
+        public TextView sentTime;
+        public TextView messageBody;
+        public Button readStatusButton;
+        public String readStatus;
+        public String chatID;
+
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            itemView.setOnClickListener(this);
+
+            sender = itemView.findViewById(R.id.sender_name);
+            sentTime = itemView.findViewById(R.id.sent_time);
+            messageBody = itemView.findViewById(R.id.message_body);
+            readStatusButton = itemView.findViewById(R.id.button);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int pos = getAdapterPosition();
+
+            Intent openChatMessages = new Intent(context, ChatsActivity.class);
+            openChatMessages.putExtra("Sender Name", this.sender.getText().toString());
+            openChatMessages.putExtra("Chat ID", listItems.get(pos).chatRoomId);
+            context.startActivity(openChatMessages);
+
+            //Animate transition into called activity
+            ((MainActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        }
+
     }
 }

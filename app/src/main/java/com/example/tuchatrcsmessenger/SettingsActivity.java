@@ -40,9 +40,9 @@ public class SettingsActivity extends AppCompatActivity {
         mFirebaseAuth = FirebaseAuth.getInstance();
     }
 
-    public void buttonClickManager(View v){
+    public void buttonClickManager(View v) {
         int id = v.getId();
-        switch (id){
+        switch (id) {
             case R.id.sign_out_button:
                 //Show Snackbar with message
                 View parentLayout = findViewById(android.R.id.content);
@@ -56,7 +56,7 @@ public class SettingsActivity extends AppCompatActivity {
 
                 final Context context = SettingsActivity.this;
 
-                if (mFirebaseUser == null){//Exit activity if user was logged out successfully
+                if (mFirebaseUser == null) {//Exit activity if user was logged out successfully
                     new CountDownTimer(1000, 1000) {
 
                         public void onTick(long millisUntilFinished) {

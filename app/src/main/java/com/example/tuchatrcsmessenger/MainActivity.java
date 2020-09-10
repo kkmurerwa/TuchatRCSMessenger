@@ -34,30 +34,24 @@ import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-    //Firebase
-    private FirebaseAuth firebaseAuth;
-    private FirebaseUser firebaseUser;
-    private FirebaseFirestore db;
-
     //Firebase path variables
     final String userInfoCollection = "users";
     final String chatRoomsCollection = "chatrooms";
     final String messagesCollection = "messages";
-    private String userID;
-
     //Global variable
     Intent welcomeScreen;
-
+    //Placeholder Layout
+    LinearLayout emptyPlaceholder;
+    //Progress bar loader
+    ProgressBar progressBarLoader;
+    //Firebase
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser firebaseUser;
+    private FirebaseFirestore db;
+    private String userID;
     //RecyclerView
     private RecyclerView conversationsRecyclerView;
     private ConversationsAdapter adapter;
-
-    //Placeholder Layout
-    LinearLayout emptyPlaceholder;
-
-    //Progress bar loader
-    ProgressBar progressBarLoader;
-
     private List<ConversationsClass> listItems;
     private CollectionReference dbConversationsCollection;
 
@@ -179,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         // Call the adapter to retrieve last message
-        if (!(listItems == null)){
+        if (!(listItems == null)) {
             adapter = new ConversationsAdapter(listItems, MainActivity.this);
             conversationsRecyclerView.setAdapter(adapter);
         }

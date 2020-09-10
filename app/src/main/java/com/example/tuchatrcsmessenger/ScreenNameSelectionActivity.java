@@ -28,20 +28,17 @@ import java.util.Objects;
 //TODO: Add a progress monitor via shared preferences that will keep track of log in progress and fix above bug
 
 public class ScreenNameSelectionActivity extends AppCompatActivity {
+    //Firebase path variables
+    final String userCollection = "users";
+    //Firebase Firestore Variables
+    FirebaseFirestore db;
+    //Firebase variables
+    FirebaseAuth firebaseAuth;
+    String userID;
+    String userPhoneNumber;
     private Button continueButton;
     private EditText displayName;
     private LinearLayout screenNameProgressBar;
-
-    //Firebase Firestore Variables
-    FirebaseFirestore db;
-
-    //Firebase variables
-    FirebaseAuth firebaseAuth;
-
-    //Firebase path variables
-    final String userCollection = "users";
-    String userID;
-    String userPhoneNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,14 +48,12 @@ public class ScreenNameSelectionActivity extends AppCompatActivity {
         //Get phone number from previous activity through added intent extra
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
-            if(extras == null) {
+            if (extras == null) {
                 userPhoneNumber = null;
-            }
-            else {
+            } else {
                 userPhoneNumber = extras.getString("Phone Number");
             }
-        }
-        else {
+        } else {
             userPhoneNumber = (String) savedInstanceState.getSerializable("Phone Number");
         }
 
@@ -77,15 +72,14 @@ public class ScreenNameSelectionActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //Code to save display name to firebase
                 String enteredDisplayName = displayName.getText().toString().trim();
-                if (displayName.length() >=3){
+                if (displayName.length() >= 3) {
                     //Do some stuff first
                     //Show progress bar
                     ProgressBarController progressBarController = new ProgressBarController();
                     progressBarController.showProgressBar(continueButton, screenNameProgressBar);
 
                     saveToFireStore(ScreenNameSelectionActivity.this, enteredDisplayName);
-                }
-                else {
+                } else {
                     Toast.makeText(ScreenNameSelectionActivity.this, "Display name should be at least" +
                             " three characters long.", Toast.LENGTH_LONG).show();
                 }

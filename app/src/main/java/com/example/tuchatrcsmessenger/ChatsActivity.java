@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 
 import androidx.annotation.NonNull;
@@ -23,8 +24,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.tuchatrcsmessenger.Adapters.MessagesAdapter;
 import com.example.tuchatrcsmessenger.Classes.ChatroomClass;
 import com.example.tuchatrcsmessenger.Classes.messagesClass;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -41,45 +44,39 @@ import java.util.Date;
 import java.util.List;
 
 public class ChatsActivity extends AppCompatActivity {
+    //new chatRoomId to avoid interfering with the other since this is static.
+    public static String chatRoomId = null;
+    final String userInfoCollection = "users";
+    CollectionReference dbPath;
+    //Variable to hold messages
+    List<messagesClass> messagesList = new ArrayList<>();
+    Date date;
+    String message;
+    boolean mIsNewConversation;
     //Variables for passed intent Extras
     private String phoneNumber;
     private String senderName;
     private String myName;
     private String chatRoomID;
-
-    //new chatRoomId to avoid interfering with the other since this is static.
-    public static String chatRoomId = null;
-
     //Layout variables
     private RecyclerView recyclerView;
     private MessagesAdapter adapter;
     private LinearLayout emptyPlaceholder;
     private EditText typedMessage;
-
     //Firestore variables for the data path
     private String chatRoomCollection = "chatrooms";
     private String messagesCollection = "messages";
-    final String userInfoCollection = "users";
-    CollectionReference dbPath;
     private String userID;
     private String receiverUserID;
     private int messageCount;
-
     //Firestore variables to retrieve messages
     private FirebaseFirestore db;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
 
+    Boolean firstOpened = true;
 
-    //Variable to hold messages
-    List<messagesClass> messagesList = new ArrayList<>();
-
-    Date date;
-
-
-    String message;
-
-    boolean mIsNewConversation;
+    private ProgressBar currentProgress = null;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -169,6 +166,10 @@ public class ChatsActivity extends AppCompatActivity {
 
     }
 
+    public void setCurrentProgress(ProgressBar progress) {
+        currentProgress = progress;
+    }
+
     private void hideSoftKeyBoard() {
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
@@ -202,6 +203,13 @@ public class ChatsActivity extends AppCompatActivity {
 
                             adapter.setList(messagesList);
                             adapter.notifyDataSetChanged();
+
+                            if (firstOpened) {
+                                firstOpened = false;
+                            } else {
+                                adapter.setCurrentPosition(adapter.getItemCount() - 1);
+                            }
+
                             recyclerView.scrollToPosition(adapter.getItemCount() - 1);
 
                         } else {
@@ -236,7 +244,16 @@ public class ChatsActivity extends AppCompatActivity {
                 chtRmId,
                 FirebaseAuth.getInstance().getUid()
         );
-        dbPath.add(messagesClass);
+        dbPath.add(messagesClass).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                if (currentProgress != null) {
+                    currentProgress.setVisibility(View.GONE);
+                    currentProgress = null;
+                    adapter.setCurrentPosition(null);
+                }
+            }
+        });
 
     }
 

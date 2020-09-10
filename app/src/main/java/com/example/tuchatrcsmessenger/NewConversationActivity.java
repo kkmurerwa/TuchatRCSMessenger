@@ -59,26 +59,22 @@ import java.util.Objects;
 import java.util.Random;
 
 public class NewConversationActivity extends AppCompatActivity {
+    //Contact permission variables
+    private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 0;
+    //Firebase path variables
+    final String userInfoCollection = "users";
     //Firebase
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private FirebaseFirestore db;
-
-    //Firebase path variables
-    final String userInfoCollection = "users";
-
     //Firestore Path Variables
     private String contactsCollection = "contacts";
     private String userID;
     private String myContactsSubcollection = "My Contacts";
-
     //New Conversations activity variables
     private RecyclerView newConversationRecyclerView;
     private LinearLayout progressBarLayout;
     private LinearLayout placeHolderLayout;
-
-    //Contact permission variables
-    private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 0;
     private int dismissStatus = 0;
 
     private List<ContactsClass> contactsListItems;

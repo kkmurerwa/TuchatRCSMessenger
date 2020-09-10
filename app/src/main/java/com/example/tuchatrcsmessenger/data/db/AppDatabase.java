@@ -12,8 +12,6 @@ import com.example.tuchatrcsmessenger.data.entity.ContactsClass;
 @Database(entities = {ContactsClass.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
-    public abstract ContactsDao getContactsDao();
-
     private static AppDatabase appDB;
 
     public static AppDatabase getInstance(Context context) {
@@ -30,6 +28,8 @@ public abstract class AppDatabase extends RoomDatabase {
                 .allowMainThreadQueries().fallbackToDestructiveMigration()
                 .build();
     }
+
+    public abstract ContactsDao getContactsDao();
 
     public void cleanUp() {
         appDB = null;

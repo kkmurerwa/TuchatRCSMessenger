@@ -2,10 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        app:showAsAction="always"
         android:id="@+id/three_dot_menu"
         android:icon="@drawable/three_dot_button"
-        android:title="">
+        android:title=""
+        app:showAsAction="always">
         <menu>
             <item
                 android:id="@+id/refresh_contacts"
