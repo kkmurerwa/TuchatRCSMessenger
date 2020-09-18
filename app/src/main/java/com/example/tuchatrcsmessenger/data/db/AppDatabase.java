@@ -7,9 +7,11 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.example.tuchatrcsmessenger.data.dao.ContactsDao;
+import com.example.tuchatrcsmessenger.data.dao.LastMessageDao;
 import com.example.tuchatrcsmessenger.data.entity.ContactsClass;
+import com.example.tuchatrcsmessenger.data.entity.LastMessage;
 
-@Database(entities = {ContactsClass.class}, version = 1, exportSchema = false)
+@Database(entities = {ContactsClass.class, LastMessage.class}, version = 2, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase appDB;
@@ -30,6 +32,7 @@ public abstract class AppDatabase extends RoomDatabase {
     }
 
     public abstract ContactsDao getContactsDao();
+    public abstract LastMessageDao getLastMessageDao();
 
     public void cleanUp() {
         appDB = null;

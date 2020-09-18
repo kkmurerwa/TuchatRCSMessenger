@@ -3,7 +3,6 @@ package com.example.tuchatrcsmessenger.Adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.telephony.SmsMessage;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tuchatrcsmessenger.ChatsActivity;
@@ -111,7 +109,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         LinearLayout datePillLL;
 
-        ProgressBar sentMessage;
+        ProgressBar sentMessageProgress;
 
 
         SentViewHolder(@NonNull final View itemView) {
@@ -133,7 +131,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             datePillLL = itemView.findViewById(R.id.date_pill_linear_layout);
 
-            sentMessage = itemView.findViewById(R.id.sent_progress);
+            sentMessageProgress = itemView.findViewById(R.id.sent_progress);
 
             messageSentTime = itemView.findViewById(R.id.time_message_sent);
 
@@ -147,15 +145,15 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             ((ChatsActivity) context).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    sentMessage.setVisibility(View.GONE);
+                    sentMessageProgress.setVisibility(View.GONE);
                 }
             });
 
             if (currentPosition != null) {
 
                 if (currentPosition == getAdapterPosition()) {
-                    sentMessage.setVisibility(View.VISIBLE);
-                    ((ChatsActivity) context).setCurrentProgress(sentMessage);
+                    sentMessageProgress.setVisibility(View.VISIBLE);
+                    ((ChatsActivity) context).setCurrentProgress(sentMessageProgress);
                 }
 
             }

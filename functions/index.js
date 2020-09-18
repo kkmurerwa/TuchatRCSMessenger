@@ -10,6 +10,7 @@ exports.sendNotification = functions.firestore.document('chatrooms/{chatRoomId}/
        let message = snap.after.data().messageBody;
         let messageSender = snap.after.data().senderName;
         let messageUserId = snap.after.data().userId;
+        let date = snap.after.data().sentTime.toDate();
         let chatRoomId = context.params.chatRoomId;
 
         let tokens = [];
@@ -43,21 +44,22 @@ exports.sendNotification = functions.firestore.document('chatrooms/{chatRoomId}/
             if (tokens.length ) {
 
                 const payload = {
-
                     data: {
                         data_type: "data_type_chat_message",
                         title: "Tuchat",
                         message: message,
                         sender_id: messageUserId,
                         sender_name: messageSender,
-                        chatRoom_id: chatRoomId
+                        chatRoom_id: chatRoomId,
+                        sentTime : date.toString()
                     }
+
                 };
-                const options = {
-                    priority: "high",
-                    timeToLive: 60 * 60 * 24
-                };
-                return admin.messaging().sendToDevice(tokens, payload).catch(err => {
+                  const options = {
+                                    priority: "high",
+                                    timeToLive: 2419200
+                                    }
+                return admin.messaging().sendToDevice(tokens, payload, options).catch(err => {
                     functions.logger.error('Messaging error: ', err);
                 });
             } else {

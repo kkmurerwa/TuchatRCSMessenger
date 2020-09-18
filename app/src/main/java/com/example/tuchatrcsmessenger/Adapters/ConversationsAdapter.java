@@ -12,12 +12,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tuchatrcsmessenger.ChatsActivity;
 import com.example.tuchatrcsmessenger.Classes.ConversationsClass;
 import com.example.tuchatrcsmessenger.MainActivity;
 import com.example.tuchatrcsmessenger.R;
+import com.example.tuchatrcsmessenger.data.db.AppDatabase;
+import com.example.tuchatrcsmessenger.data.entity.LastMessage;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,6 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,7 +44,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
     String chatRoomsCollection = "chatrooms";
     String messagesCollection = "messages";
     //
-    String strDate;
+    Date strDate;
     String strDateDay;
     String strDateYear;
     private List<ConversationsClass> listItems;
@@ -97,58 +101,60 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
     }
 
     //Get last message
-    private void getLastMessage(final String chatRoomID, final TextView lastMessage, final TextView sentTime) {
+    private void getLastMessage(final String chatRoomID, final TextView lastMessageText, final TextView sentTimeText) {
+        final AppDatabase db = AppDatabase.getInstance(context);
 
-        db.collection(chatRoomsCollection)
-                .document(chatRoomID)
-                .collection(messagesCollection)
-                .orderBy("sentTime", Query.Direction.DESCENDING)
-                .limit(1)
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        ((MainActivity) context).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                db.getLastMessageDao().getLastMessageLiveData(chatRoomID).observe(((MainActivity) context), new Observer<LastMessage>() {
                     @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if (!queryDocumentSnapshots.isEmpty()) {
+                    public void onChanged(LastMessage lastMessage) {
+                        if (lastMessage != null) {
 
-                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                            try {
+                                strDate = formatterFullDate.parse(lastMessage.getSentTime());
+                                if (formatterHalfDate.format(strDate).equals(currentDateString) && strDateYear.equals(currentDateStringYear)) {
 
-                            int index = 0;
+                                    sentTimeText.setText(formatterTime.format(strDate));
 
-                            ConversationsClass thisConversation = list.get(index).toObject(ConversationsClass.class);
-                            strDate = formatterFullDate.format(thisConversation.getSentTime());
+                                } else if (Integer.parseInt(strDateDay) == Integer.parseInt(currentDateStringDay) - 1 && strDateYear.equals(currentDateStringYear)) {
+                                    sentTimeText.setText("Yesterday");
+                                } else if (strDateYear.equals(currentDateStringYear)) {
 
-                            if (strDate.equals(currentDateString) && strDateYear.equals(currentDateStringYear)) {
-                                sentTime.setText(formatterTime.format(thisConversation.getSentTime()));
-                            } else if (Integer.parseInt(strDateDay) == Integer.parseInt(currentDateStringDay) - 1 && strDateYear.equals(currentDateStringYear)) {
-                                sentTime.setText("Yesterday");
-                            } else if (strDateYear.equals(currentDateStringYear)) {
-                                sentTime.setText(formatterHalfDate.format(thisConversation.getSentTime()));
-                            } else {
-                                sentTime.setText(strDate);
+                                    sentTimeText.setText(formatterHalfDate.format(strDate));
+
+                                } else {
+                                    sentTimeText.setText(formatterHalfDate.format(strDate));
+                                }
+                                // Remove all tab spaces and enters and replace them with spaces
+                                String messageBody = lastMessage.getMessage().replaceAll("\\s", " ");
+
+                                // Trim the string to the first 30 characters. Add  ellipses if message length exceeds 30 chars
+                                String trimmedString;
+                                int preferredMessageLength = 30;
+                                if (Math.min(messageBody.length(), preferredMessageLength) == messageBody.length()) {
+                                    trimmedString = messageBody;
+                                } else {
+                                    trimmedString = messageBody.substring(0, preferredMessageLength) + "...";
+                                }
+                                lastMessageText.setText(trimmedString);
+                            } catch (ParseException e) {
+
+                                Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                                e.printStackTrace();
                             }
-                            // Remove all tab spaces and enters and replace them with spaces
-                            String messageBody = thisConversation.getMessageBody().replaceAll("\\s", " ");
 
-                            // Trim the string to the first 30 characters. Add  ellipses if message length exceeds 30 chars
-                            String trimmedString;
-                            int preferredMessageLength = 30;
-                            if (Math.min(messageBody.length(), preferredMessageLength) == messageBody.length()) {
-                                trimmedString = messageBody;
-                            } else {
-                                trimmedString = messageBody.substring(0, preferredMessageLength) + "...";
-                            }
-                            lastMessage.setText(trimmedString);
-                        } else {
-                            //
+
                         }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(context, "Failed to retrieve your conversations", Toast.LENGTH_SHORT).show();
+
+
                     }
                 });
+            }
+        });
+
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
