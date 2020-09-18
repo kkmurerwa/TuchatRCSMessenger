@@ -319,8 +319,6 @@ public class NewConversationActivity extends AppCompatActivity {
     }
 
     private void checkContactsAgainstFirestoreUsers() {
-
-
         db.collection(userInfoCollection)
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -409,8 +407,8 @@ public class NewConversationActivity extends AppCompatActivity {
 
 
     /**
-     * The following classes are used by java to do actions in background. Since we are accesing db we must do everything in
-     * background. In Kotlin its much easier. We dont need all these.
+     * The following classes are used by java to do actions in background. Since we are accessing db we must do everything in
+     * background. In Kotlin its much easier. We don't need all these.
      */
 
 
@@ -471,7 +469,6 @@ public class NewConversationActivity extends AppCompatActivity {
         }
     }
 
-
     //Adding contacts to db
     private static class InsertTask extends AsyncTask<Void, Void, Boolean> {
 
@@ -517,6 +514,4 @@ public class NewConversationActivity extends AppCompatActivity {
 
 
     }
-
-
 }
