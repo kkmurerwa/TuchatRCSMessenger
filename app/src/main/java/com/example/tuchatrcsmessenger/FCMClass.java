@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.RingtoneManager;
@@ -17,6 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import com.example.tuchatrcsmessenger.Classes.SaveTokenObject;
+import com.example.tuchatrcsmessenger.data.db.AppDatabase;
+import com.example.tuchatrcsmessenger.data.entity.LastMessage;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -28,6 +31,9 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 
 
@@ -53,6 +59,34 @@ public class FCMClass extends FirebaseMessagingService {
 
             String chatRoomId = remoteMessage.getData().get("chatRoom_id");
 
+            String sentTime = remoteMessage.getData().get("sentTime");
+
+            char[] chars = sentTime.toCharArray();
+
+            for (int i = chars.length - 1; i >= 0; i--) {
+                if (chars[i] == ' ') {
+                    sentTime = (sentTime.substring(0, i)).trim();
+                    break;
+                }
+            }
+
+            Log.d("SentTimeF", sentTime);
+
+            SimpleDateFormat formatterFullDate = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss zzz");
+            SimpleDateFormat formatter = new SimpleDateFormat("d MMM yyyy");
+
+            try {
+                Date strDate = formatterFullDate.parse(sentTime);
+
+                LastMessage lastMessage = new LastMessage(message, formatter.format(strDate), chatRoomId);
+
+                saveLastMessage(lastMessage);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                Log.d("SentTimeE", e.getLocalizedMessage());
+            }
+
+
             if (ChatsActivity.chatRoomId == null) {
                 buildNotification(title, message, sender, sender_id, chatRoomId);
             } else {
@@ -64,6 +98,15 @@ public class FCMClass extends FirebaseMessagingService {
         Log.d("MessagingService", "Received message " + remoteMessage.getData().toString());
 
     }
+
+    private void saveLastMessage(LastMessage lastMessage) {
+
+        AppDatabase db = AppDatabase.getInstance(this);
+
+        db.getLastMessageDao().insertLastMessage(lastMessage);
+
+    }
+
 
     private void buildNotification(String title, String message, String sender, String sender_id, String chatRoomId) {
 
@@ -128,27 +171,24 @@ public class FCMClass extends FirebaseMessagingService {
             // Instantiate a Builder object.
             NotificationCompat.Builder builder = new NotificationCompat.Builder(
                     this, "default_notification_channel_name"
-            );
-
-            //add properties to the builder
-            builder.setSmallIcon(R.drawable.user_icon)
+            ).setDefaults(Notification.DEFAULT_ALL)
+                    .setContentTitle(sender)
+                    .setStyle(
+                            new NotificationCompat
+                                    .BigTextStyle()
+                                    .bigText(message)
+                                    .setBigContentTitle(sender)
+                                    .setSummaryText("New message")
+                    )
+                    .setSmallIcon(R.mipmap.ic_launcher)
                     .setLargeIcon(
                             BitmapFactory.decodeResource(
                                     getApplicationContext().getResources(),
-                                    R.drawable.user_icon
+                                    R.mipmap.ic_launcher
                             )
                     )
-                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                    .setContentTitle(sender)
-                    // .setContentText(message)
-                    .setSubText(message)
-                    .setColor(Color.parseColor("#66a3ff"))
-                    .setAutoCancel(true)
-                    .setStyle(
-                            new NotificationCompat.BigTextStyle()
-                                    .bigText(message)
-                    )
-                    .setOnlyAlertOnce(true);
+                    .setOnlyAlertOnce(true)
+                    .setAutoCancel(true);
             builder.setContentIntent(notifyPendingIntent);
             NotificationManager mNotificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

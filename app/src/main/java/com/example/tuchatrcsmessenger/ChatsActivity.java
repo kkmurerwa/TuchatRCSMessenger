@@ -2,6 +2,7 @@ package com.example.tuchatrcsmessenger;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -24,6 +25,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.tuchatrcsmessenger.Adapters.MessagesAdapter;
 import com.example.tuchatrcsmessenger.Classes.ChatroomClass;
 import com.example.tuchatrcsmessenger.Classes.messagesClass;
+import com.example.tuchatrcsmessenger.data.db.AppDatabase;
+import com.example.tuchatrcsmessenger.data.entity.LastMessage;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -39,9 +42,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class ChatsActivity extends AppCompatActivity {
     //new chatRoomId to avoid interfering with the other since this is static.
@@ -198,8 +203,11 @@ public class ChatsActivity extends AppCompatActivity {
                                 messagesList.add(listItem);
                             }
 
+
                             recyclerView.setVisibility(View.VISIBLE);
                             emptyPlaceholder.setVisibility(View.GONE);
+
+                            saveLastMessage(messagesList.get(messagesList.size() - 1));
 
                             adapter.setList(messagesList);
                             adapter.notifyDataSetChanged();
@@ -209,7 +217,6 @@ public class ChatsActivity extends AppCompatActivity {
                             } else {
                                 adapter.setCurrentPosition(adapter.getItemCount() - 1);
                             }
-
                             recyclerView.scrollToPosition(adapter.getItemCount() - 1);
 
                         } else {
@@ -219,6 +226,25 @@ public class ChatsActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    private void saveLastMessage(messagesClass messagesClass) {
+
+        SimpleDateFormat formatterFullDate = new SimpleDateFormat("d MMM yyyy");
+
+        final LastMessage lastMessage = new LastMessage(messagesClass.getMessageBody(), formatterFullDate.format(messagesClass.getSentTime()),
+                chatRoomID);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AppDatabase db = AppDatabase.getInstance(ChatsActivity.this);
+
+                db.getLastMessageDao().insertLastMessage(lastMessage);
+
+            }
+        }).start();
+    }
+
 
     private void setAdapter() {
         adapter = new MessagesAdapter(ChatsActivity.this);
@@ -235,7 +261,6 @@ public class ChatsActivity extends AppCompatActivity {
         date.getTime();
 
         String chtRmId = chatRoomID;
-
 
         final messagesClass messagesClass = new messagesClass(
                 myName,
@@ -267,7 +292,7 @@ public class ChatsActivity extends AppCompatActivity {
                             List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
 
                             for (DocumentSnapshot d : list) {
-                                if (d.getString("user_phone").equals(phoneNumber)) {
+                                if (Objects.equals(d.getString("user_phone"), phoneNumber)) {
                                     senderName = d.getString("user_name");
                                     receiverUserID = d.getString("user_id");
                                     //Set the name of the sender as action bar title
