@@ -141,8 +141,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
                                 }
                                 lastMessageText.setText(trimmedString);
                             } catch (ParseException e) {
-
-                                Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                               
                                 e.printStackTrace();
                             }
 
