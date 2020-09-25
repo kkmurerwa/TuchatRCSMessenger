@@ -87,7 +87,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
         strDateDay = formatterDay.format(listItem.getSentTime());
         strDateYear = formatterYear.format(listItem.getSentTime());
 
-        getLastMessage(listItem.getChatRoomId(), holder.messageBody, holder.sentTime);
+        getLastMessage(listItem.getChatRoomId(), holder.messageBody, holder.sentTime, holder.readStatusButton);
 
         holder.sender.setText(listItem.getSenderName());
 
@@ -101,7 +101,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
     }
 
     //Get last message
-    private void getLastMessage(final String chatRoomID, final TextView lastMessageText, final TextView sentTimeText) {
+    private void getLastMessage(final String chatRoomID, final TextView lastMessageText, final TextView sentTimeText, final Button readStatusButton) {
         final AppDatabase db = AppDatabase.getInstance(context);
 
         ((MainActivity) context).runOnUiThread(new Runnable() {
@@ -114,6 +114,12 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
                         if (lastMessage != null) {
 
                             try {
+
+                                if (lastMessage.getUnreadCount()>0){
+                                    readStatusButton.setBackgroundResource(R.drawable.notification_dot);
+//                                    readStatusButton.setText(lastMessage.getUnreadCount());
+                                }
+
                                 strDate = formatterFullDate.parse(lastMessage.getSentTime());
                                 if (formatterHalfDate.format(strDate).equals(currentDateString) && strDateYear.equals(currentDateStringYear)) {
 
