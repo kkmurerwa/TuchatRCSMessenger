@@ -78,9 +78,9 @@ public class FCMClass extends FirebaseMessagingService {
             try {
                 Date strDate = formatterFullDate.parse(sentTime);
 
-                LastMessage lastMessage = new LastMessage(message, formatter.format(strDate), chatRoomId);
+                LastMessage lastMessage = new LastMessage(message, formatter.format(strDate), chatRoomId, 1);
 
-                saveLastMessage(lastMessage);
+                saveLastMessage(lastMessage, chatRoomId);
             } catch (ParseException e) {
                 e.printStackTrace();
                 Log.d("SentTimeE", e.getLocalizedMessage());
@@ -99,9 +99,13 @@ public class FCMClass extends FirebaseMessagingService {
 
     }
 
-    private void saveLastMessage(LastMessage lastMessage) {
+    private void saveLastMessage(LastMessage lastMessage, String chatRoomId) {
 
         AppDatabase db = AppDatabase.getInstance(this);
+
+        int existingUnreadCount = db.getLastMessageDao().getLastMessage(chatRoomId).getUnreadCount();
+
+        lastMessage.setUnreadCount(existingUnreadCount + 1);
 
         db.getLastMessageDao().insertLastMessage(lastMessage);
 

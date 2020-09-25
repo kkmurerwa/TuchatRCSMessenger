@@ -231,8 +231,11 @@ public class ChatsActivity extends AppCompatActivity {
 
         SimpleDateFormat formatterFullDate = new SimpleDateFormat("d MMM yyyy");
 
-        final LastMessage lastMessage = new LastMessage(messagesClass.getMessageBody(), formatterFullDate.format(messagesClass.getSentTime()),
-                chatRoomID);
+        final LastMessage lastMessage = new LastMessage(
+                messagesClass.getMessageBody(),
+                formatterFullDate.format(messagesClass.getSentTime()),
+                chatRoomID,
+                0);
 
         new Thread(new Runnable() {
             @Override
