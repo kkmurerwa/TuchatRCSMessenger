@@ -203,11 +203,8 @@ public class ChatsActivity extends AppCompatActivity {
                                 messagesList.add(listItem);
                             }
 
-
                             recyclerView.setVisibility(View.VISIBLE);
                             emptyPlaceholder.setVisibility(View.GONE);
-
-                            saveLastMessage(messagesList.get(messagesList.size() - 1));
 
                             adapter.setList(messagesList);
                             adapter.notifyDataSetChanged();
@@ -417,6 +414,7 @@ public class ChatsActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        saveLastMessage(messagesList.get(messagesList.size() - 1));
         chatRoomId = null;
         Log.d("ChatsActivityLife", "OnPause Called - ID = " + chatRoomId);
     }
