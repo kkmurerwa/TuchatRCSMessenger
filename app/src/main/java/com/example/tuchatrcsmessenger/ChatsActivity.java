@@ -154,7 +154,7 @@ public class ChatsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 message = typedMessage.getText().toString().trim();
 
-                if (message.length() > 1) {
+                if (message.length() > 0) {
                     saveMessagesToFirestore();
                     typedMessage.setText("");
 
