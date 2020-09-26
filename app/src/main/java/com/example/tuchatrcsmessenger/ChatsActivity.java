@@ -1,6 +1,8 @@
 package com.example.tuchatrcsmessenger;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -166,8 +168,9 @@ public class ChatsActivity extends AppCompatActivity {
         });
 
         setAdapter();
-        retrieveMyUserName();
         updatesListener();
+        retrieveMyUserName();
+
 
     }
 
@@ -416,6 +419,8 @@ public class ChatsActivity extends AppCompatActivity {
         super.onPause();
         saveLastMessage(messagesList.get(messagesList.size() - 1));
         chatRoomId = null;
+
+
         Log.d("ChatsActivityLife", "OnPause Called - ID = " + chatRoomId);
     }
 
@@ -423,6 +428,14 @@ public class ChatsActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         chatRoomId = chatRoomID;
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        SharedPreferences sharedpreferences = getSharedPreferences("pref", Context.MODE_PRIVATE);
+        int notifId = sharedpreferences.getInt(chatRoomID, 0);
+        if (mNotificationManager != null) {
+            mNotificationManager.cancel(notifId);
+        }
         Log.d("ChatsActivityLife", "OnResume Called - ID = " + chatRoomId);
     }
 

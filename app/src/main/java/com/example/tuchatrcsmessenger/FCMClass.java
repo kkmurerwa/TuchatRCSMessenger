@@ -8,11 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.media.RingtoneManager;
 import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -20,7 +17,6 @@ import androidx.core.app.NotificationCompat;
 import com.example.tuchatrcsmessenger.Classes.SaveTokenObject;
 import com.example.tuchatrcsmessenger.data.db.AppDatabase;
 import com.example.tuchatrcsmessenger.data.entity.LastMessage;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
@@ -81,7 +77,6 @@ public class FCMClass extends FirebaseMessagingService {
                 LastMessage lastMessage = new LastMessage(message, formatter.format(strDate), chatRoomId, 1);
 
 
-
                 //Build notification
                 if (ChatsActivity.chatRoomId == null) {
                     saveLastMessage(lastMessage, chatRoomId);
@@ -119,6 +114,8 @@ public class FCMClass extends FirebaseMessagingService {
         Intent intent = new Intent(this, ChatsActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
+        int notificationId = buildNotificationId(chatRoomId);
+        saveNotifID(notificationId, chatRoomId);
         intent.putExtra("Sender Name", sender);
         intent.putExtra("id", sender_id);
         intent.putExtra("Chat ID", chatRoomId);
@@ -134,7 +131,7 @@ public class FCMClass extends FirebaseMessagingService {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager =
                     (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-            int notificationId = 1;
+
             String channelId = "channel-01";
             String channelName = "Chat Channel";
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
@@ -173,7 +170,7 @@ public class FCMClass extends FirebaseMessagingService {
             }
 
         } else {
-            int notificationId = buildNotificationId(chatRoomId);
+
             // Instantiate a Builder object.
             NotificationCompat.Builder builder = new NotificationCompat.Builder(
                     this, "default_notification_channel_name"
@@ -204,6 +201,14 @@ public class FCMClass extends FirebaseMessagingService {
         }
 
 
+    }
+
+    private void saveNotifID(int notificationId, String chatRoomId) {
+        SharedPreferences sharedpreferences = getSharedPreferences("pref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+
+        editor.putInt(chatRoomId, notificationId);
+        editor.apply();
     }
 
     @Override
