@@ -80,23 +80,25 @@ public class FCMClass extends FirebaseMessagingService {
 
                 LastMessage lastMessage = new LastMessage(message, formatter.format(strDate), chatRoomId, 1);
 
-                saveLastMessage(lastMessage, chatRoomId);
+
+
+                //Build notification
+                if (ChatsActivity.chatRoomId == null) {
+                    saveLastMessage(lastMessage, chatRoomId);
+                    buildNotification(title, message, sender, sender_id, chatRoomId);
+                } else {
+                    if (!ChatsActivity.chatRoomId.equals(chatRoomId)) {
+                        saveLastMessage(lastMessage, chatRoomId);
+                        buildNotification(title, message, sender, sender_id, chatRoomId);
+                    }
+                }
+
             } catch (ParseException e) {
                 e.printStackTrace();
                 Log.d("SentTimeE", e.getLocalizedMessage());
             }
-
-
-            if (ChatsActivity.chatRoomId == null) {
-                buildNotification(title, message, sender, sender_id, chatRoomId);
-            } else {
-                if (!ChatsActivity.chatRoomId.equals(chatRoomId)) {
-                    buildNotification(title, message, sender, sender_id, chatRoomId);
-                }
-            }
         }
         Log.d("MessagingService", "Received message " + remoteMessage.getData().toString());
-
     }
 
     private void saveLastMessage(LastMessage lastMessage, String chatRoomId) {

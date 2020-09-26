@@ -117,7 +117,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
 
                                 if (lastMessage.getUnreadCount()>0){
                                     readStatusButton.setBackgroundResource(R.drawable.notification_dot);
-//                                    readStatusButton.setText(lastMessage.getUnreadCount());
+                                    readStatusButton.setText(Integer.toString((lastMessage.getUnreadCount())));
                                 }
 
                                 strDate = formatterFullDate.parse(lastMessage.getSentTime());
