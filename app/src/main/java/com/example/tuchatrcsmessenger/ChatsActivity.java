@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
@@ -84,6 +85,8 @@ public class ChatsActivity extends AppCompatActivity {
     Boolean firstOpened = true;
 
     private ProgressBar currentProgress = null;
+    private AppDatabase mDb;
+    private int mUnreadCount;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -150,6 +153,14 @@ public class ChatsActivity extends AppCompatActivity {
         ImageButton sendMessage = findViewById(R.id.send_message_button);
         typedMessage = findViewById(R.id.typed_message);
 
+        mDb = AppDatabase.getInstance(ChatsActivity.this);
+
+        if (mDb.getLastMessageDao().getLastMessage(chatRoomId) != null){
+            mUnreadCount = mDb.getLastMessageDao().getLastMessage(chatRoomId).getUnreadCount();
+        }
+
+
+
         //Set button onClickListener
         sendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,6 +170,11 @@ public class ChatsActivity extends AppCompatActivity {
                 if (message.length() > 0) {
                     saveMessagesToFirestore();
                     typedMessage.setText("");
+
+                    if (mUnreadCount>0){
+                        saveLastMessage(messagesList.get(messagesList.size()-1));
+                        adapter.notifyDataSetChanged();
+                    }
 
                     if (messageCount == 0) {
                         createConversation();
@@ -170,8 +186,6 @@ public class ChatsActivity extends AppCompatActivity {
         setAdapter();
         updatesListener();
         retrieveMyUserName();
-
-
     }
 
     public void setCurrentProgress(ProgressBar progress) {
@@ -181,6 +195,13 @@ public class ChatsActivity extends AppCompatActivity {
     private void hideSoftKeyBoard() {
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
+    }
+
+    public int getUnreadCount() {
+        if (mDb.getLastMessageDao().getLastMessage(chatRoomId) != null){
+            return mDb.getLastMessageDao().getLastMessage(chatRoomId).getUnreadCount();
+        }
+        return 0;
     }
 
     private void updatesListener() {
@@ -240,9 +261,9 @@ public class ChatsActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                AppDatabase db = AppDatabase.getInstance(ChatsActivity.this);
 
-                db.getLastMessageDao().insertLastMessage(lastMessage);
+
+                mDb.getLastMessageDao().insertLastMessage(lastMessage);
 
             }
         }).start();

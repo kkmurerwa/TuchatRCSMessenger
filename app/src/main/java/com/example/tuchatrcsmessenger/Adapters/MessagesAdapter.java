@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.tuchatrcsmessenger.ChatsActivity;
 import com.example.tuchatrcsmessenger.Classes.messagesClass;
 import com.example.tuchatrcsmessenger.R;
+import com.example.tuchatrcsmessenger.data.db.AppDatabase;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.SimpleDateFormat;
@@ -37,11 +38,14 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private SimpleDateFormat formatterDate = new SimpleDateFormat("dd MMM yyyy");
     private SimpleDateFormat formatterHalfDate = new SimpleDateFormat("MMM yyyy");
     private SimpleDateFormat formatterDay = new SimpleDateFormat("dd");
+    private final AppDatabase mDb;
+    private int mUnreadCount;
 
     public MessagesAdapter(Context context) {
         this.context = context;
         listItems = new ArrayList<>();
-
+        mDb = AppDatabase.getInstance(context);
+        mUnreadCount = ((ChatsActivity) context).getUnreadCount();
     }
 
     public void setList(List<messagesClass> newList) {
@@ -57,6 +61,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
 
         if (viewType == 1) {
             View v = LayoutInflater.from(parent.getContext())
@@ -83,8 +88,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         messagesClass listItem = listItems.get(position);
-
-
         if (holder.getItemViewType() == 1) {
             ((SentViewHolder) holder).bind(listItem, position);
         } else {
@@ -210,7 +213,9 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         TextView messageReceivedTime;
         TextView messageBodyReceived;
         TextView datePillText;
+        TextView unreadCountPill;
         LinearLayout datePillLL;
+        LinearLayout unreadCountPillLL;
 
 
         ReceivedViewHolder(@NonNull final View itemView) {
@@ -218,7 +223,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    Toast.makeText(itemView.getContext(), "Heeeey", Toast.LENGTH_SHORT).show();
+                    // TODO Add code to copy text to clipboard
+                    Toast.makeText(itemView.getContext(), "Text copied to clipboard", Toast.LENGTH_SHORT).show();
                     return false;
                 }
             });
@@ -226,11 +232,14 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             myName = ((ChatsActivity) context).returnMyName();
 
 
+
             messageBodyReceived = itemView.findViewById(R.id.received_message_body);
             datePillText = itemView.findViewById(R.id.received_date_pill_text);
+            unreadCountPill = itemView.findViewById(R.id.received_unread_count);
 
 
             datePillLL = itemView.findViewById(R.id.received_date_pill_linear_layout);
+            unreadCountPillLL = itemView.findViewById(R.id.received_unread_count_linear_layout);
 
             messageReceivedTime = itemView.findViewById(R.id.received_message_time);
 
@@ -251,10 +260,23 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             Boolean today = currentMessageDay.equals(currentUserDay);
             Boolean yesterday = Integer.parseInt(currentMessageDay) == Integer.parseInt(currentUserDay) - 1;
 
+//            if (mUnreadCount>0){
+//                if (position == getItemCount()-mUnreadCount) {
+//                    if (mUnreadCount>1){
+//                        unreadCountPillLL.setVisibility(View.VISIBLE);
+//                        unreadCountPill.setText(String.format("%s unread messages", mUnreadCount));
+//                    } else {
+//                        unreadCountPillLL.setVisibility(View.VISIBLE);
+//                        unreadCountPill.setText(String.format("%s unread message", mUnreadCount));
+//                    }
+//                } else {
+//                    unreadCountPillLL.setVisibility(View.GONE);
+//                }
+//            }
+
             if (position >= 1) {
                 previousListItem = listItems.get(position - 1);
                 String previousMessageDate = formatterDate.format(previousListItem.sentTime);
-
 
                 if (!currentMessageDate.equals(previousMessageDate)) {
                     datePillLL.setVisibility(View.VISIBLE);
@@ -283,6 +305,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             String messageSenderName = listItem.senderName;
             String serverTimestamp = formatterMessageTime.format(listItem.sentTime);
+
+
         }
     }
 }

@@ -27,6 +27,29 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/received_unread_count_linear_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="10dp"
+        android:visibility="gone"
+        android:background="@drawable/date_pill_background"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="5dp">
+
+        <TextView
+            android:id="@+id/received_unread_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="New messages"
+            android:textColor="@color/colorText" />
+
+    </LinearLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
 
         xmlns:app="http://schemas.android.com/apk/res-auto"

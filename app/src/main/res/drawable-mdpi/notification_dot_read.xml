@@ -2,7 +2,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:padding="3dp"
     android:shape="rectangle">
-    <solid android:color="@color/colorPrimary" />
+    <solid android:color="@android:color/transparent" />
     <corners
         android:bottomLeftRadius="@dimen/notification_border_radius"
         android:bottomRightRadius="@dimen/notification_border_radius"
