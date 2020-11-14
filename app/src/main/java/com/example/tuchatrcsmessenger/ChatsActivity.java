@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.tuchatrcsmessenger.Adapters.MessagesAdapter;
 import com.example.tuchatrcsmessenger.Classes.ChatroomClass;
 import com.example.tuchatrcsmessenger.Classes.messagesClass;
+import com.example.tuchatrcsmessenger.External.TinyDB;
 import com.example.tuchatrcsmessenger.data.db.AppDatabase;
 import com.example.tuchatrcsmessenger.data.entity.LastMessage;
 import com.google.android.gms.tasks.Continuation;
@@ -159,7 +160,9 @@ public class ChatsActivity extends AppCompatActivity {
             mUnreadCount = mDb.getLastMessageDao().getLastMessage(chatRoomId).getUnreadCount();
         }
 
-
+        // Delete notifs from database
+        TinyDB tinyDB = new TinyDB(this);
+        tinyDB.clear();
 
         //Set button onClickListener
         sendMessage.setOnClickListener(new View.OnClickListener() {
