@@ -7,8 +7,11 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.graphics.drawable.Icon;
 import android.media.RingtoneManager;
 import android.os.Build;
 import android.text.Spannable;
@@ -18,6 +21,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
+import android.app.RemoteInput;
 
 import com.example.tuchatrcsmessenger.Classes.SaveTokenObject;
 import com.example.tuchatrcsmessenger.External.TinyDB;
@@ -44,6 +48,7 @@ import java.util.Set;
 
 
 public class FCMClass extends FirebaseMessagingService {
+    private static final String KEY_TEXT_REPLY = "key_text_reply" ;
     ArrayList<String> mSet = new ArrayList<>();
     private SharedPreferences mSharedpreferences;
     private TinyDB mTinyDB;
@@ -173,10 +178,10 @@ public class FCMClass extends FirebaseMessagingService {
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setContentTitle(sender)
-                .setContentText(message)
+                .setContentText(unreadMessages.get(0))
                 .setStyle(new NotificationCompat
                                 .BigTextStyle()
-                                .bigText(message)
+                                .bigText(unreadMessages.get(0))
                                 .setBigContentTitle(sender +": " +message))
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon(
@@ -186,6 +191,7 @@ public class FCMClass extends FirebaseMessagingService {
                         )
                 )
                 .setOnlyAlertOnce(true)
+                .setNumber(messagesCount)
                 .setAutoCancel(true);
 
         // Create inbox-style notifications
