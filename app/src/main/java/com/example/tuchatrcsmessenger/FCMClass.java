@@ -184,52 +184,33 @@ public class FCMClass extends FirebaseMessagingService {
                                 .bigText(message)
                                 .setBigContentTitle(sender))
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(
-                        BitmapFactory.decodeResource(
+                .setLargeIcon(BitmapFactory.decodeResource(
                                 getApplicationContext().getResources(),
-                                R.mipmap.ic_launcher
-                        )
-                )
+                                R.mipmap.ic_launcher))
                 .setOnlyAlertOnce(true)
                 .setNumber(messagesCount)
                 .setContentIntent(notifyPendingIntent)
                 .setAutoCancel(true);
 
-        // Create inbox-style notifications
-        Notification mBuilderInbox;
-        if (messagesCount > 3) {
-            mBuilderInbox = new NotificationCompat.InboxStyle(mBuilder)
-                    .addLine(unreadMessages.get(0))
-                    .addLine(unreadMessages.get(1))
-                    .addLine(unreadMessages.get(2) +" " +"(+" +(messagesCount-3) +" unread)")
-                    .setBigContentTitle(sender)
-                    .setSummaryText(messageCounter(messagesCount))
-                    .build();
-        } else if (messagesCount == 3){
-            mBuilderInbox = new NotificationCompat.InboxStyle(mBuilder)
-                    .addLine(unreadMessages.get(0))
-                    .addLine(unreadMessages.get(1))
-                    .addLine(unreadMessages.get(2))
-                    .setBigContentTitle(sender)
-                    .setSummaryText(messageCounter(messagesCount))
-                    .build();
-        } else if (messagesCount == 2){
-            mBuilderInbox = new NotificationCompat.InboxStyle(mBuilder)
-                    .addLine(unreadMessages.get(0))
-                    .addLine(unreadMessages.get(1))
-                    .setBigContentTitle(sender)
-                    .setSummaryText(messageCounter(messagesCount))
-                    .build();
-        } else {
-            mBuilderInbox = new NotificationCompat.InboxStyle(mBuilder)
-                    .addLine(unreadMessages.get(0))
-                    .setBigContentTitle(sender)
-                    .setSummaryText(messageCounter(messagesCount))
-                    .build();
+        // Create inbox-style
+        NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle(mBuilder)
+                .setBigContentTitle(sender)
+                .setSummaryText(messageCounter(messagesCount));
+
+        // Add all new messages to notification
+        for (int i = 0; i < messagesCount; i ++){
+            inboxStyle.addLine(unreadMessages.get(i));
         }
 
+        // Build notification style
+        inboxStyle.build();
+
+        // Create a notification that is based on the notification builder
+        Notification notification = mBuilder.setStyle(inboxStyle).build();
+
+        // Create notification
         if (mNotificationManager != null) {
-            mNotificationManager.notify(notificationId, mBuilderInbox);
+            mNotificationManager.notify(notificationId, notification);
         }
     }
 
