@@ -178,11 +178,11 @@ public class FCMClass extends FirebaseMessagingService {
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setContentTitle(sender)
-                .setContentText(unreadMessages.get(0))
+                .setContentText(message)
                 .setStyle(new NotificationCompat
                                 .BigTextStyle()
-                                .bigText(unreadMessages.get(0))
-                                .setBigContentTitle(sender +": " +message))
+                                .bigText(message)
+                                .setBigContentTitle(sender))
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon(
                         BitmapFactory.decodeResource(
@@ -192,6 +192,7 @@ public class FCMClass extends FirebaseMessagingService {
                 )
                 .setOnlyAlertOnce(true)
                 .setNumber(messagesCount)
+                .setContentIntent(notifyPendingIntent)
                 .setAutoCancel(true);
 
         // Create inbox-style notifications
@@ -226,8 +227,6 @@ public class FCMClass extends FirebaseMessagingService {
                     .setSummaryText(messageCounter(messagesCount))
                     .build();
         }
-
-        mBuilder.setContentIntent(notifyPendingIntent);
 
         if (mNotificationManager != null) {
             mNotificationManager.notify(notificationId, mBuilderInbox);
