@@ -138,6 +138,12 @@ public class NewConversationActivity extends AppCompatActivity {
         getSavedContacts();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshContacts();
+    }
+
     public void requestContactsPermission() {
         int readContacts = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS);
         if (readContacts != PackageManager.PERMISSION_GRANTED) {
@@ -191,7 +197,6 @@ public class NewConversationActivity extends AppCompatActivity {
 
     }
 
-
     public void getContacts() {
 
         ContentResolver contentResolver = getContentResolver();
@@ -199,17 +204,16 @@ public class NewConversationActivity extends AppCompatActivity {
         String displayName;
         contactsListItems = new ArrayList<>();
         Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, Phone.DISPLAY_NAME + " ASC");
+        assert cursor != null;
         if (cursor.getCount() > 0) {
             while (cursor.moveToNext()) {
                 int hasPhoneNumber = Integer.parseInt(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)));
                 if (hasPhoneNumber > 0) {
-
-                    ContactsInfoClass contactsInfoClass = new ContactsInfoClass();
                     ContactsClass contactsClass = new ContactsClass();
                     contactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
                     displayName = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
-                    contactsInfoClass.setDisplayName(displayName);
+
                     contactsClass.setDisplayName(displayName);
                     contactsClass.setId(contactId);
 
@@ -220,6 +224,7 @@ public class NewConversationActivity extends AppCompatActivity {
                             new String[]{contactId},
                             null);
 
+                    assert phoneCursor != null;
                     while (phoneCursor.moveToNext()) {
                         String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(Phone.NUMBER)).replaceAll("\\s", "");
 
@@ -227,8 +232,6 @@ public class NewConversationActivity extends AppCompatActivity {
                         if (phoneNumber.charAt(0) == '0') {
                             phoneNumber = phoneNumber.replaceFirst("0", "+254");
                         }
-
-                        contactsInfoClass.setPhoneNumber(phoneNumber);
                         contactsClass.setPhoneNumber(phoneNumber);
                     }
                     phoneCursor.close();
@@ -238,8 +241,6 @@ public class NewConversationActivity extends AppCompatActivity {
         }
         cursor.close();
         checkContactsAgainstFirestoreUsers();
-
-
     }
 
     public String chatIdGenerator() {
@@ -291,31 +292,32 @@ public class NewConversationActivity extends AppCompatActivity {
         if (id == R.id.refresh_contacts) {
             //Code to refresh contacts
             //Show snack bar with message
-
-
-            placeHolderLayout.setVisibility(View.GONE);
-            progressBarLayout.setVisibility(View.VISIBLE);
-            dontHideProgress = true;
-            //Delete Current Db
-            new DeleteDb(NewConversationActivity.this).execute();
-
-            View parentLayout = findViewById(android.R.id.content);
-            Snackbar.make(parentLayout, "Refreshing contacts...", Snackbar.LENGTH_LONG).show();
-
-            new CountDownTimer(1000, 1000) {
-                public void onTick(long millisUntilFinished) {
-                    //Add code after every second
-                }
-
-                public void onFinish() {
-
-                    Toast.makeText(NewConversationActivity.this, "I have been called", Toast.LENGTH_SHORT).show();
-                    getContacts();
-                }
-            }.start();
-
+            refreshContacts();
         }
         return true;
+    }
+
+    private void refreshContacts() {
+        placeHolderLayout.setVisibility(View.GONE);
+        progressBarLayout.setVisibility(View.VISIBLE);
+        dontHideProgress = true;
+        //Delete Current Db
+        new DeleteDb(NewConversationActivity.this).execute();
+
+        View parentLayout = findViewById(android.R.id.content);
+        Snackbar.make(parentLayout, "Refreshing contacts...", Snackbar.LENGTH_LONG).show();
+
+        new CountDownTimer(1000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                //Add code after every second
+            }
+
+            public void onFinish() {
+
+                Toast.makeText(NewConversationActivity.this, "I have been called", Toast.LENGTH_SHORT).show();
+                getContacts();
+            }
+        }.start();
     }
 
     private void checkContactsAgainstFirestoreUsers() {
@@ -333,6 +335,10 @@ public class NewConversationActivity extends AppCompatActivity {
                             if (!list.isEmpty()) {
                                 for (int i = 0; i < contactsListItems.size(); i++) {
                                     for (DocumentSnapshot d : list) {
+                                        if (Objects.equals(contactsListItems.get(i), "+254731240085")){
+                                            Toast.makeText(NewConversationActivity.this, "Sophie found!!!", Toast.LENGTH_SHORT).show();
+                                        }
+
                                         if (Objects.requireNonNull(d.getString("user_phone")).equals(contactsListItems.get(i).getPhoneNumber())) {
                                             savetoDB(contactsListItems.get(i));
                                             checkIfEvenOneExist = true;
@@ -362,16 +368,12 @@ public class NewConversationActivity extends AppCompatActivity {
     }
 
     private void savetoDB(ContactsClass contactsClass) {
-
         new InsertTask(this, contactsClass).execute();
-
     }
-
 
     public void setAdapter() {
         adapter = new ContactsAdapter(NewConversationActivity.this);
         newConversationRecyclerView.setAdapter(adapter);
-
     }
 
     public void nextActivityCaller(String phoneNumber) {
@@ -408,7 +410,7 @@ public class NewConversationActivity extends AppCompatActivity {
 
     /**
      * The following classes are used by java to do actions in background. Since we are accessing db we must do everything in
-     * background. In Kotlin its much easier. We don't need all these.
+     * background.
      */
 
 
