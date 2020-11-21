@@ -40,6 +40,9 @@ dependencies {
     //This dependency enables country code picker and phone number authentication
     implementation 'com.hbb20:ccp:2.3.9'
 
+    // Material dependency
+    implementation 'com.google.android.material:material:1.2.1'
+
 
     implementation 'com.google.android.gms:play-services-auth:18.1.0'
     implementation 'com.google.android.gms:play-services-base:17.4.0'
