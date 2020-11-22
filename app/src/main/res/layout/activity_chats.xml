@@ -10,7 +10,7 @@
 
     <include
         android:id="@+id/chats_toolbar"
-        layout="@layout/toolbar" />
+        layout="@layout/toolbar_chat" />
 
     <RelativeLayout
         android:id="@+id/linearLayout"
