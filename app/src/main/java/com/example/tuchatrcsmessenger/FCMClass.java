@@ -21,6 +21,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
+
 import android.app.RemoteInput;
 
 import com.example.tuchatrcsmessenger.Classes.SaveTokenObject;
@@ -48,7 +49,7 @@ import java.util.Set;
 
 
 public class FCMClass extends FirebaseMessagingService {
-    private static final String KEY_TEXT_REPLY = "key_text_reply" ;
+    private static final String KEY_TEXT_REPLY = "key_text_reply";
     ArrayList<String> mSet = new ArrayList<>();
     private SharedPreferences mSharedpreferences;
     private TinyDB mTinyDB;
@@ -56,7 +57,7 @@ public class FCMClass extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-
+ 
         mSharedpreferences = getSharedPreferences("pref", Context.MODE_PRIVATE);
 
         mTinyDB = new TinyDB(this);
@@ -133,7 +134,7 @@ public class FCMClass extends FirebaseMessagingService {
         // Create list to save multiple messages
         ArrayList<String> unreadMessages = mTinyDB.getListString(chatRoomId);
 
-        Log.d("Set", unreadMessages+" end ");
+        Log.d("Set", unreadMessages + " end ");
 
         // Create and save notification id
         int notificationId = buildNotificationId(chatRoomId);
@@ -172,7 +173,6 @@ public class FCMClass extends FirebaseMessagingService {
         int messagesCount = unreadMessages.size();
 
 
-
         // Create notification builder
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, channelId)
                 .setDefaults(Notification.DEFAULT_ALL)
@@ -180,14 +180,14 @@ public class FCMClass extends FirebaseMessagingService {
                 .setContentTitle(sender)
                 .setContentText(message)
                 .setStyle(new NotificationCompat
-                                .BigTextStyle()
-                                .bigText(message)
-                                .setBigContentTitle(sender))
+                        .BigTextStyle()
+                        .bigText(message)
+                        .setBigContentTitle(sender))
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon(BitmapFactory.decodeResource(
-                                getApplicationContext().getResources(),
-                                R.mipmap.ic_launcher))
-                .setOnlyAlertOnce(true)
+                        getApplicationContext().getResources(),
+                        R.mipmap.ic_launcher))
+                .setOnlyAlertOnce(false)
                 .setNumber(messagesCount)
                 .setContentIntent(notifyPendingIntent)
                 .setAutoCancel(true);
@@ -198,7 +198,7 @@ public class FCMClass extends FirebaseMessagingService {
                 .setSummaryText(messageCounter(messagesCount));
 
         // Add all new messages to notification
-        for (int i = 0; i < messagesCount; i ++){
+        for (int i = 0; i < messagesCount; i++) {
             inboxStyle.addLine(unreadMessages.get(i));
         }
 
@@ -215,8 +215,8 @@ public class FCMClass extends FirebaseMessagingService {
     }
 
     public String messageCounter(int messageCount) {
-        if (messageCount > 1) return messageCount +" new messages";
-        else return messageCount +" new message";
+        if (messageCount > 1) return messageCount + " new messages";
+        else return messageCount + " new message";
     }
 
     private void saveNotifID(int notificationId, String chatRoomId) {
@@ -225,7 +225,7 @@ public class FCMClass extends FirebaseMessagingService {
         editor.apply();
     }
 
-    private void saveNotifMessages(String chatRoomId, String message){
+    private void saveNotifMessages(String chatRoomId, String message) {
         // Get from shared prefs using TinyDB
         mSet = mTinyDB.getListString(chatRoomId);
 

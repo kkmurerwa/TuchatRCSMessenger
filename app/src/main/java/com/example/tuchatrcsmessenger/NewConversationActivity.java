@@ -209,13 +209,9 @@ public class NewConversationActivity extends AppCompatActivity {
             while (cursor.moveToNext()) {
                 int hasPhoneNumber = Integer.parseInt(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)));
                 if (hasPhoneNumber > 0) {
-                    ContactsClass contactsClass = new ContactsClass();
+
                     contactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
                     displayName = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-
-
-                    contactsClass.setDisplayName(displayName);
-                    contactsClass.setId(contactId);
 
                     Cursor phoneCursor = getContentResolver().query(
                             Phone.CONTENT_URI,
@@ -232,10 +228,13 @@ public class NewConversationActivity extends AppCompatActivity {
                         if (phoneNumber.charAt(0) == '0') {
                             phoneNumber = phoneNumber.replaceFirst("0", "+254");
                         }
+                        ContactsClass contactsClass = new ContactsClass();
+                        contactsClass.setDisplayName(displayName);
                         contactsClass.setPhoneNumber(phoneNumber);
+                        contactsListItems.add(contactsClass);
                     }
                     phoneCursor.close();
-                    contactsListItems.add(contactsClass);
+
                 }
             }
         }
