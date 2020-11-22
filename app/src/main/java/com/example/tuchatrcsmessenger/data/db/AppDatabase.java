@@ -12,7 +12,7 @@ import com.example.tuchatrcsmessenger.data.entity.ContactsClass;
 import com.example.tuchatrcsmessenger.data.entity.LastMessage;
 
 
-@Database(entities = {ContactsClass.class, LastMessage.class}, version = 4, exportSchema = false)
+@Database(entities = {ContactsClass.class, LastMessage.class}, version = 5, exportSchema = false)
 @TypeConverters({DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase appDB;
