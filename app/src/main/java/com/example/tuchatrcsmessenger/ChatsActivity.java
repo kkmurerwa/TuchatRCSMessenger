@@ -265,7 +265,6 @@ public class ChatsActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-
                 mDb.getLastMessageDao().insertLastMessage(lastMessage);
 
             }

@@ -7,10 +7,10 @@ import androidx.room.PrimaryKey;
 
 @Entity(tableName = "contacts_table")
 public class ContactsClass {
+
+    String displayName;
     @PrimaryKey(autoGenerate = false)
     @NonNull
-    String id;
-    String displayName;
     String phoneNumber;
 
     public ContactsClass() {
@@ -18,20 +18,12 @@ public class ContactsClass {
 
     }
 
-    public ContactsClass(@NonNull String id, String displayName, String phoneNumber) {
-        this.id = id;
+    public ContactsClass(String displayName, @NonNull String phoneNumber) {
+
         this.displayName = displayName;
         this.phoneNumber = phoneNumber;
     }
 
-    @NonNull
-    public String getId() {
-        return id;
-    }
-
-    public void setId(@NonNull String id) {
-        this.id = id;
-    }
 
     public String getDisplayName() {
         return displayName;
@@ -45,7 +37,7 @@ public class ContactsClass {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
+    public void setPhoneNumber(@NonNull String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 }

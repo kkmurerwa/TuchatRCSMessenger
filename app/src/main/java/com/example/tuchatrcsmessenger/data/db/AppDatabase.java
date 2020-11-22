@@ -11,7 +11,7 @@ import com.example.tuchatrcsmessenger.data.dao.LastMessageDao;
 import com.example.tuchatrcsmessenger.data.entity.ContactsClass;
 import com.example.tuchatrcsmessenger.data.entity.LastMessage;
 
-@Database(entities = {ContactsClass.class, LastMessage.class}, version = 3, exportSchema = false)
+@Database(entities = {ContactsClass.class, LastMessage.class}, version = 4, exportSchema = false)
 @TypeConverters({DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase appDB;
