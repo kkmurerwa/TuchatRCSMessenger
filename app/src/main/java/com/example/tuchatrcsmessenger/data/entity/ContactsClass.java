@@ -9,21 +9,32 @@ import androidx.room.PrimaryKey;
 public class ContactsClass {
 
     String displayName;
+    String phoneNumber;
     @PrimaryKey(autoGenerate = false)
     @NonNull
-    String phoneNumber;
+    String userId;
+
 
     public ContactsClass() {
 
 
     }
 
-    public ContactsClass(String displayName, @NonNull String phoneNumber) {
-
+    public ContactsClass(String userId, String displayName, @NonNull String phoneNumber) {
+        this.userId = userId;
         this.displayName = displayName;
         this.phoneNumber = phoneNumber;
     }
 
+
+    @NonNull
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(@NonNull String userId) {
+        this.userId = userId;
+    }
 
     public String getDisplayName() {
         return displayName;

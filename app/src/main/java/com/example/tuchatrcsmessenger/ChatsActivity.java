@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -88,6 +89,9 @@ public class ChatsActivity extends AppCompatActivity {
     private ProgressBar currentProgress = null;
     private AppDatabase mDb;
     private int mUnreadCount;
+    private TextView mToolbarName;
+    private TextView mToolbarPhone;
+    private String mExistingChatId;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -109,27 +113,26 @@ public class ChatsActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+        mToolbarName = findViewById(R.id.toolbar_sender_name);
+        mToolbarPhone = findViewById(R.id.toolbar_sender_phone);
 
         db = FirebaseFirestore.getInstance();
         //Retrieve the passed strings from calling activity
         Intent intent = getIntent();
 
-        if (intent.hasExtra("Phone Number")) {
+        boolean newChat = intent.getBooleanExtra("new_chat", false);
+        if (newChat){
+            // Do other stuff
             phoneNumber = intent.getStringExtra("Phone Number");
+            receiverUserID = intent.getStringExtra("Contact ID");
             retrieveSenderUserName();
-        }
-
-
-        if (intent.hasExtra("Sender Name")) {
+        } else {
+            // Do stuff
             senderName = intent.getStringExtra("Sender Name");
-            setTitle(senderName);
-        }
-        if (intent.hasExtra("id")) {
             receiverUserID = intent.getStringExtra("id");
+            mToolbarName.setText(senderName);
         }
 
-        chatRoomID = intent.getStringExtra("Chat ID");
-        chatRoomId = intent.getStringExtra("Chat ID");
 
         //Initialize firebase variables
         firebaseAuth = FirebaseAuth.getInstance();
@@ -137,6 +140,11 @@ public class ChatsActivity extends AppCompatActivity {
         assert firebaseUser != null;
         userID = firebaseUser.getUid();
 
+
+
+
+        chatRoomID = intent.getStringExtra("Chat ID");
+        chatRoomId = intent.getStringExtra("Chat ID");
 
         //Initialize the layout variables
         recyclerView = findViewById(R.id.chats_recycler_view);
@@ -271,7 +279,6 @@ public class ChatsActivity extends AppCompatActivity {
         }).start();
     }
 
-
     private void setAdapter() {
         adapter = new MessagesAdapter(ChatsActivity.this);
         recyclerView.setAdapter(adapter);
@@ -321,8 +328,10 @@ public class ChatsActivity extends AppCompatActivity {
                                 if (Objects.equals(d.getString("user_phone"), phoneNumber)) {
                                     senderName = d.getString("user_name");
                                     receiverUserID = d.getString("user_id");
+
                                     //Set the name of the sender as action bar title
-                                    setTitle(senderName);
+                                    mToolbarName.setText(senderName);
+                                    mToolbarPhone.setText(phoneNumber);
                                 }
                             }
                         }
@@ -344,7 +353,8 @@ public class ChatsActivity extends AppCompatActivity {
                 });
     }
 
-    public void checkIfConversationExists() {
+    public boolean checkIfConversationExists() {
+        final boolean[] returnValue = {false};
         db.collection(userInfoCollection)
                 .document(userID)
                 .collection(chatRoomCollection)
@@ -356,13 +366,19 @@ public class ChatsActivity extends AppCompatActivity {
                             List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
 
                             for (DocumentSnapshot d : list) {
-                                if (d.getString("").equals(receiverUserID)) {
-                                    //Do stuff
+                                if (d.getString("userId").equals(receiverUserID)) {
+                                    senderName = d.getString("senderName");
+                                    mToolbarName.setText(senderName);
+                                    chatRoomID = d.getId();
+                                    chatRoomId = d.getId();
+                                    returnValue[0] = true;
                                 }
                             }
+                            updatesListener();
                         }
                     }
                 });
+        return returnValue[0];
     }
 
     public void createConversation() {
@@ -440,7 +456,11 @@ public class ChatsActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        saveLastMessage(messagesList.get(messagesList.size() - 1));
+
+        // This if statement prevents crashing when user presses back when starting new conversation
+        if (messageCount > 0){
+            saveLastMessage(messagesList.get(messagesList.size() - 1));
+        }
         chatRoomId = null;
 
 

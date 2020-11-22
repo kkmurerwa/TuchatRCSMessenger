@@ -86,6 +86,8 @@ public class NewConversationActivity extends AppCompatActivity {
 
     private AppDatabase appDatabase;
     private Boolean dontHideProgress = false;
+    private String mExistingChatId = null;
+    private boolean mReturnValue;
 
 
     @Override
@@ -138,11 +140,11 @@ public class NewConversationActivity extends AppCompatActivity {
         getSavedContacts();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        refreshContacts();
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        refreshContacts();
+//    }
 
     public void requestContactsPermission() {
         int readContacts = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS);
@@ -198,7 +200,6 @@ public class NewConversationActivity extends AppCompatActivity {
     }
 
     public void getContacts() {
-
         ContentResolver contentResolver = getContentResolver();
         String contactId;
         String displayName;
@@ -334,12 +335,12 @@ public class NewConversationActivity extends AppCompatActivity {
                             if (!list.isEmpty()) {
                                 for (int i = 0; i < contactsListItems.size(); i++) {
                                     for (DocumentSnapshot d : list) {
-                                        if (Objects.equals(contactsListItems.get(i), "+254731240085")){
-                                            Toast.makeText(NewConversationActivity.this, "Sophie found!!!", Toast.LENGTH_SHORT).show();
-                                        }
-
                                         if (Objects.requireNonNull(d.getString("user_phone")).equals(contactsListItems.get(i).getPhoneNumber())) {
-                                            savetoDB(contactsListItems.get(i));
+                                            ContactsClass modifiedContact = new ContactsClass();
+                                            modifiedContact.setDisplayName(contactsListItems.get(i).getDisplayName());
+                                            modifiedContact.setUserId(d.getId());
+                                            modifiedContact.setPhoneNumber(contactsListItems.get(i).getPhoneNumber());
+                                            savetoDB(modifiedContact);
                                             checkIfEvenOneExist = true;
                                         }
                                     }
@@ -375,12 +376,34 @@ public class NewConversationActivity extends AppCompatActivity {
         newConversationRecyclerView.setAdapter(adapter);
     }
 
-    public void nextActivityCaller(String phoneNumber) {
+    public void checkIfConversationExists(final String receiverUserID) {
+        db.collection(userInfoCollection)
+                .document(userID)
+                .collection("chatrooms")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                            for (DocumentSnapshot d : list) {
+                                if (d.getString("userId").equals(receiverUserID)) {
+                                    mExistingChatId = d.getId();
+                                }
+                            }
+                        }
+                    }
+                });
+    }
+
+    public void nextActivityCaller(String phoneNumber, String contactId) {
         String generatedString = chatIdGenerator();
 
         Intent startConversation = new Intent(NewConversationActivity.this, ChatsActivity.class);
         startConversation.putExtra("Phone Number", phoneNumber);
         startConversation.putExtra("Chat ID", generatedString);
+        startConversation.putExtra("Contact ID", contactId);
+        startConversation.putExtra("new_chat", true);
         startActivity(startConversation);
 
         //Animate transition into called activity

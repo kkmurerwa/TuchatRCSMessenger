@@ -189,6 +189,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
             Intent openChatMessages = new Intent(context, ChatsActivity.class);
             openChatMessages.putExtra("Sender Name", this.sender.getText().toString());
             openChatMessages.putExtra("Chat ID", listItems.get(pos).chatRoomId);
+            openChatMessages.putExtra("new_chat", false);
             context.startActivity(openChatMessages);
 
             //Animate transition into called activity

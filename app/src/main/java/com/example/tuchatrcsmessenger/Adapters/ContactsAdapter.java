@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -74,8 +75,9 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         public void onClick(View view) {
             int pos = getAdapterPosition();
             String phoneNumber = listItems.get(pos).getPhoneNumber();
+            String userId = listItems.get(pos).getUserId();
 
-            ((NewConversationActivity) context).nextActivityCaller(phoneNumber);
+            ((NewConversationActivity) context).nextActivityCaller(phoneNumber, userId);
         }
 
     }
