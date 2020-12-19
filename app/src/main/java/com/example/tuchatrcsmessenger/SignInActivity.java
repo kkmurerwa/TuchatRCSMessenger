@@ -182,13 +182,6 @@ public class SignInActivity extends AppCompatActivity {
                         .setCallbacks(mCallbacks)          // OnVerificationStateChangedCallbacks
                         .build();
         PhoneAuthProvider.verifyPhoneNumber(options);
-
-//        PhoneAuthProvider.getInstance().verifyPhoneNumber(
-//                phoneNumber,        // Phone number to verify
-//                30,                 // Timeout duration
-//                TimeUnit.SECONDS,   // Unit of timeout
-//                this,               // Activity (for callback binding)
-//                mCallbacks);        // OnVerificationStateChangedCallbacks
     }
 
     private void verifyCode(String code) {
@@ -196,26 +189,6 @@ public class SignInActivity extends AppCompatActivity {
         PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.getCredential(verificationID, code);
         signInWithPhoneAuthCredential(phoneAuthCredential);
     }
-
-//    private void signInWithCredential(PhoneAuthCredential phoneAuthCredential) {
-//        mAuth.signInWithCredential(phoneAuthCredential)
-//                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<AuthResult> task) {
-//                        if (task.isSuccessful()) {
-//
-//
-//                            //Save Token to Firestore
-//                            saveToken();
-//
-//                        } else {
-//                            //Hide progress bar
-//                            ProgressBarController controller = new ProgressBarController();
-//                            controller.hideProgressbar(signInButton, progressBarLayout);
-//                        }
-//                    }
-//                });
-//    }
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         mAuth.signInWithCredential(credential)
