@@ -11,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tuchatrcsmessenger.Classes.SaveTokenObject;
@@ -23,14 +22,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.hbb20.CountryCodePicker;
 
-import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 public class SignInActivity extends AppCompatActivity {
@@ -42,18 +43,24 @@ public class SignInActivity extends AppCompatActivity {
     LinearLayout progressBarLayout;
     Boolean verificationMode = false;
 
+    private static final String TAG = "PhoneAuthActivity";
+
     //Firebase variables
-    FirebaseAuth firebaseAuth;
+    FirebaseAuth mAuth;
     String verificationID;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         @Override
         public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
             //Detect the code automatically
-            String code = phoneAuthCredential.getSmsCode();
-            if (code != null) {
-                //Call verify code method if code is automatically retrieved
-                verifyCode(code);
-            }
+            Log.d("SUCCESS", "onVerificationCompleted:" + phoneAuthCredential);
+
+            signInWithPhoneAuthCredential(phoneAuthCredential);
+
+//            String code = phoneAuthCredential.getSmsCode();
+//            if (code != null) {
+//                //Call verify code method if code is automatically retrieved
+//                verifyCode(code);
+//            }
         }
 
         @Override
@@ -88,7 +95,7 @@ public class SignInActivity extends AppCompatActivity {
 
 
         //Firebase Auth initialization
-        firebaseAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         //Initialize phone number EditText
         phoneNumber = findViewById(R.id.phone_entry);
@@ -167,32 +174,63 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     public void signInMethod(String phoneNumber) {
-        PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                phoneNumber,        // Phone number to verify
-                30,                 // Timeout duration
-                TimeUnit.SECONDS,   // Unit of timeout
-                this,               // Activity (for callback binding)
-                mCallbacks);        // OnVerificationStateChangedCallbacks
+        PhoneAuthOptions options =
+                PhoneAuthOptions.newBuilder(mAuth)
+                        .setPhoneNumber(phoneNumber)       // Phone number to verify
+                        .setTimeout(30L, TimeUnit.SECONDS) // Timeout and unit
+                        .setActivity(this)                 // Activity (for callback binding)
+                        .setCallbacks(mCallbacks)          // OnVerificationStateChangedCallbacks
+                        .build();
+        PhoneAuthProvider.verifyPhoneNumber(options);
+
+//        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+//                phoneNumber,        // Phone number to verify
+//                30,                 // Timeout duration
+//                TimeUnit.SECONDS,   // Unit of timeout
+//                this,               // Activity (for callback binding)
+//                mCallbacks);        // OnVerificationStateChangedCallbacks
     }
 
     private void verifyCode(String code) {
         //This verifies the code either entered by the user or auto-retrieved
         PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.getCredential(verificationID, code);
-        signInWithCredential(phoneAuthCredential);
+        signInWithPhoneAuthCredential(phoneAuthCredential);
     }
 
-    private void signInWithCredential(PhoneAuthCredential phoneAuthCredential) {
-        firebaseAuth.signInWithCredential(phoneAuthCredential)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+//    private void signInWithCredential(PhoneAuthCredential phoneAuthCredential) {
+//        mAuth.signInWithCredential(phoneAuthCredential)
+//                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        if (task.isSuccessful()) {
+//
+//
+//                            //Save Token to Firestore
+//                            saveToken();
+//
+//                        } else {
+//                            //Hide progress bar
+//                            ProgressBarController controller = new ProgressBarController();
+//                            controller.hideProgressbar(signInButton, progressBarLayout);
+//                        }
+//                    }
+//                });
+//    }
+
+    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
 
-
-                            //Save Token to Firestore
+                            FirebaseUser user = task.getResult().getUser();
                             saveToken();
-
                         } else {
+                            // Sign in failed, display a message and update the UI
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
                             //Hide progress bar
                             ProgressBarController controller = new ProgressBarController();
                             controller.hideProgressbar(signInButton, progressBarLayout);

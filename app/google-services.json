@@ -23,11 +23,19 @@
           }
         },
         {
-          "client_id": "432841621688-fk9tslfv10hirdgleomsg0tnq2sbvn6j.apps.googleusercontent.com",
+          "client_id": "432841621688-afbmjf3756ibkg3ggc6kp27ed0deinkr.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.tuchatrcsmessenger",
-            "certificate_hash": "a3c336f20905b61b71f24732ffd51433ee255581"
+            "certificate_hash": "7acd17bfb3dce5bcd67e4efb8ae865414ae453c2"
+          }
+        },
+        {
+          "client_id": "432841621688-e621kgoshft3ougovqg8hqfb113lr107.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tuchatrcsmessenger",
+            "certificate_hash": "8b428b1c0a43d7a18e7cfe79d94445511f2b7d28"
           }
         },
         {
@@ -36,6 +44,22 @@
           "android_info": {
             "package_name": "com.example.tuchatrcsmessenger",
             "certificate_hash": "323a984dff3748104645483bf41631cd330925bd"
+          }
+        },
+        {
+          "client_id": "432841621688-fk9tslfv10hirdgleomsg0tnq2sbvn6j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tuchatrcsmessenger",
+            "certificate_hash": "a3c336f20905b61b71f24732ffd51433ee255581"
+          }
+        },
+        {
+          "client_id": "432841621688-vsr15qvmlmrj6m99dkujeucto6hmd8ms.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tuchatrcsmessenger",
+            "certificate_hash": "e7193fe9f6fa5466e71094e708cacd3a6d94db6a"
           }
         },
         {
