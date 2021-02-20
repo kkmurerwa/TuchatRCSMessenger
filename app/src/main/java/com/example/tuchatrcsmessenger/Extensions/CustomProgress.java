@@ -1,4 +1,4 @@
-package com.example.tuchatrcsmessenger.External;
+package com.example.tuchatrcsmessenger.Extensions;
 
 
 import android.app.Dialog;
@@ -6,7 +6,6 @@ import android.content.Context;
 import android.view.View;
 import android.view.Window;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.example.tuchatrcsmessenger.R;
 

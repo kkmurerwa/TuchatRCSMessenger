@@ -65,7 +65,6 @@ public class SignInActivity extends AppCompatActivity {
 
         @Override
         public void onVerificationFailed(@NonNull FirebaseException e) {
-
             Log.e("LogInError", e.getLocalizedMessage() + e.getMessage());
             ProgressBarController controller = new ProgressBarController();
             controller.hideProgressbar(signInButton, progressBarLayout);

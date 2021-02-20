@@ -7,25 +7,16 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
-import android.graphics.drawable.Icon;
 import android.media.RingtoneManager;
 import android.os.Build;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.StyleSpan;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
-import android.app.RemoteInput;
-
 import com.example.tuchatrcsmessenger.Classes.SaveTokenObject;
-import com.example.tuchatrcsmessenger.External.TinyDB;
+import com.example.tuchatrcsmessenger.Extensions.TinyDB;
 import com.example.tuchatrcsmessenger.data.db.AppDatabase;
 import com.example.tuchatrcsmessenger.data.entity.LastMessage;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -42,10 +33,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 
 public class FCMClass extends FirebaseMessagingService {

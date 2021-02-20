@@ -16,10 +16,8 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -29,13 +27,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.tuchatrcsmessenger.Adapters.MessagesAdapter;
 import com.example.tuchatrcsmessenger.Classes.ChatroomClass;
 import com.example.tuchatrcsmessenger.Classes.messagesClass;
-import com.example.tuchatrcsmessenger.External.TinyDB;
+import com.example.tuchatrcsmessenger.Extensions.TinyDB;
 import com.example.tuchatrcsmessenger.data.db.AppDatabase;
 import com.example.tuchatrcsmessenger.data.entity.LastMessage;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -63,6 +58,7 @@ public class ChatsActivity extends AppCompatActivity {
     Date date;
     String message;
     boolean mIsNewConversation;
+
     //Variables for passed intent Extras
     private String phoneNumber;
     private String senderName;

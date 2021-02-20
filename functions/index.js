@@ -7,7 +7,7 @@ admin.initializeApp(functions.config().firebase);
 exports.sendNotification = functions.firestore.document('chatrooms/{chatRoomId}/messages/{messageId}')
     .onWrite((snap, context) => {
 
-       let message = snap.after.data().messageBody;
+        let message = snap.after.data().messageBody;
         let messageSender = snap.after.data().senderName;
         let messageUserId = snap.after.data().userId;
         let date = snap.after.data().sentTime.toDate();

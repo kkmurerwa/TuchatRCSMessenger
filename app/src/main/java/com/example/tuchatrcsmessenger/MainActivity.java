@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +22,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -98,6 +100,9 @@ public class MainActivity extends AppCompatActivity {
         getDataFromFireStore();
         conversationUpdatesListener();
 
+        // Check to enable migrations from version < 1.3 to >= 1.4
+//        checkIfChatsMigrated();
+
         //Set on-click listener for FAB
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -135,7 +140,6 @@ public class MainActivity extends AppCompatActivity {
 
                             List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
 
-
                             if (!listItems.isEmpty()) {
                                 listItems.clear();
                             }
@@ -143,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
                             for (DocumentSnapshot d : list) {
                                 ConversationsClass p = d.toObject(ConversationsClass.class);
 
+                                assert p != null;
                                 ConversationsClass listItem = new ConversationsClass(
                                         p.getSenderName(),
                                         p.getMessageBody(),
@@ -151,9 +156,6 @@ public class MainActivity extends AppCompatActivity {
                                 );
                                 listItems.add(listItem);
                             }
-
-//                            adapter = new ConversationsAdapter(listItems, MainActivity.this);
-//                            conversationsRecyclerView.setAdapter(adapter);
 
                             conversationsRecyclerView.setVisibility(View.VISIBLE);
                             progressBarLoader.setVisibility(View.GONE);
@@ -192,10 +194,32 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.settings) {
-            //Code to log out the user
+            // Open settings
             startActivity(new Intent(MainActivity.this, SettingsActivity.class));
         }
         return true;
     }
 
+    private void checkIfChatsMigrated(){
+        //Initialize variable for Conversations retrieval
+//        DocumentReference chatMigrationDocument = db.collection(userInfoCollection)
+//                .document(userID)
+//                .collection("migration_status")
+//                .document("is_migrated");
+//
+//        chatMigrationDocument.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//            @Override
+//            public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                boolean isMigrated = false;
+//                isMigrated = documentSnapshot.getBoolean("is_migrated_status");
+//
+//                Log.d("Migration status", String.valueOf(isMigrated));
+//
+//                if (!isMigrated) {
+//                    Intent migrationIntent = new Intent(MainActivity.this, SettingsActivity.class);
+//                    startActivity(migrationIntent);
+//                }
+//            }
+//        });
+    }
 }

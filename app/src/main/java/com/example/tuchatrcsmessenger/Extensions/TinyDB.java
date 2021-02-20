@@ -1,4 +1,4 @@
-package com.example.tuchatrcsmessenger.External;
+package com.example.tuchatrcsmessenger.Extensions;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -281,6 +281,16 @@ public class TinyDB {
      */
     public boolean getBoolean(String key) {
         return preferences.getBoolean(key, false);
+    }
+
+
+    /**
+     * Get boolean value from SharedPreferences at 'key'. If key not found, return true
+     * @param key SharedPreferences key
+     * @return boolean value at 'key' or false if key not found
+     */
+    public boolean getBooleanTrueDefault(String key) {
+        return preferences.getBoolean(key, true);
     }
 
     /**
