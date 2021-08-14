@@ -56,11 +56,6 @@ public class SignInActivity extends AppCompatActivity {
 
             signInWithPhoneAuthCredential(phoneAuthCredential);
 
-//            String code = phoneAuthCredential.getSmsCode();
-//            if (code != null) {
-//                //Call verify code method if code is automatically retrieved
-//                verifyCode(code);
-//            }
         }
 
         @Override
